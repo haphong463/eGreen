@@ -758,8 +758,8 @@
                                 </div>
                                 <div class="product-details">
                                     <h4 class="product-name">Hoa cuc</h4>
-                                    <p class="product-info">Color: Vang</p>
-                                    <p class="product-info">Gender: mlem mlem</p>
+                                    <p class="product-info">Color : Vang</p>
+                                    <p class="product-info">Type : mlem mlem</p>
                                 </div>
                             </div>
                         </td>
