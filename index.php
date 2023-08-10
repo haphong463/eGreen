@@ -37,7 +37,7 @@ if(isset($_SESSION['user'])){
 
 </head>
 
-<body style="background-color: #000000;">
+<body>
 
 
 
