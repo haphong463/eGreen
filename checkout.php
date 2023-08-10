@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,7 +15,7 @@
 
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/box.css">
+    <link rel="stylesheet" href="css/checkout.css">
 
 
     <!-- icon link -->
@@ -43,21 +40,21 @@
         <?php
         include('part/header.php');
         ?>
-<!-- home Section -->
-<div class="home">
+        <!-- home Section -->
+        <div class="home">
 
-<div class="header-row">
-    <div class="header-row-inside">
+            <div class="header-row">
+                <div class="header-row-inside">
 
-        <h1 class="shopName">Check Out</h1>
-        <div class="header-row__button">
-            <a href="#" class="btn"></a>
+                    <h1 class="shopName">Check Out</h1>
+                    <div class="header-row__button">
+                        <a href="#" class="btn"></a>
+                    </div>
+                </div>
+            </div>
+
         </div>
-    </div>
-</div>
-
-</div>
-<!-- home Section End-->
+        <!-- home Section End-->
 
 
 
@@ -68,47 +65,115 @@
 
             <form action="successPayment.php?code=<?php echo $code ?>&id=<?php echo $id ?>" id="theForm" method="post">
 
-                <div id="payment">
-
-                </div>
-
                 <div class="row justify-content-center">
-                    <div class="col-xl-10 ftco-animate">
+                    <div class="col-xl-12 ftco-animate">
 
-                        <div class="row mt-5 pt-3 d-flex">
-                            <div class="col-md-3 d-flex">
+                        <div class="row mt-5 pt-3">
+
+                            <div class="col-lg-7">
+                                <div class="row-lg-12">
+                                    <div class="cart-detail bg-light p-3 p-md-4">
+                                        <h2 class="billing-heading mb-4">Shipping Infomation</h2>
+
+
+                                        <div class="row">
+                                            <div class="col-lg-7">
+                                                <div class="form-group">
+                                                    <div class="col-md-12">
+                                                        <div class="checkbox">
+                                                            <label style="width:100%;">
+                                                                <input type="text" value="" class="mr-2" style="float: right;" placeholder="Enter the recipient's name">
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-5">
+                                                <div class="form-group">
+                                                    <div class="col-md-12">
+                                                        <div class="checkbox">
+                                                            <label style="width:100%;">
+                                                                <input type="text" value="" class="mr-2" style="float: right;" placeholder="Enter the recipient phone">
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                <div class="checkbox">
+                                                    <label style="width:100%;">
+                                                        <input type="text" value="" class="mr-2" style="float: right;" placeholder="Enter the recipient's address">
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+<br>
+                                <div class="row-lg-12">
+                                    <div class="cart-detail bg-light p-3 p-md-4">
+                                        <h2 class="billing-heading mb-4">Shipping Infomation <span style="float:right;"><button type="button" class="btn btn-outline-primary">Place Order</button></span></h2>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-5">
                                 <div class="cart-detail cart-total bg-light p-3 p-md-4">
                                     <h3 class="billing-heading mb-4">Cart Total</h3>
-
-                                    <p class="d-flex">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <div class="checkbox">
+                                                <label style="width:100%;">
+                                                    <div class="row">
+                                                        <div class="col-lg-3">
+                                                            <span style="float: left; font-size:20px;">
+                                                                Products :
+                                                            </span>
+                                                        </div>
+                                                        <div class="col-lg-9" style="text-align: center;">
+                                                            <span style="float: right; font-size:20px;">
+                                                                bobu
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p>
 
                                         <span>Subtotal : </span>
-                            <span>
-                            100 $
-                            </span>
+                                        <span style="float: right;">
+                                            100 $
+                                        </span>
 
-                        </p>
-                        <p class="d-flex">
-                            <span>Delivery : </span>
-                            <span>
-                            100 $
-                            </span>
-                        </p>
-                        <p class="d-flex">
+                                    </p>
+                                    <p>
+                                        <span>Delivery : </span>
+                                        <span style="float: right;">
+                                            100 $
+                                        </span>
+                                    </p>
+                                    <p>
 
-                            <span>Discount :</span>
-                            <span>
-                            55 %
-                            </span>
+                                        <span>Discount :</span>
+                                        <span style="float: right;">
+                                            98.00 $
+                                        </span>
 
-                        </p>
+                                    </p>
 
-                                        <hr><br><br>
+                                    <hr><br><br>
 
-                                    <p class="d-flex total-price">
+                                    <p class="total-price">
 
                                         <span>Total :</span>
-                                        <span>
+                                        <span style="float: right;">
                                             1000 $
                                         </span>
 
@@ -116,22 +181,8 @@
 
                                 </div>
                             </div>
-                            <div class="col-md-9">
-                                <div class="cart-detail bg-light p-3 p-md-4">
-                                    <h3 class="billing-heading mb-4">Payment Method</h3>
 
-                                    <div class="form-group">
-                                        <div class="col-md-12">
-                                            <div class="checkbox">
-                                                <label><input type="checkbox" value="" class="mr-2">After payment there will be no refund for any reason, please think carefully before paying</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="container">
-                                        những phương thức thanh toán
-                                    </div>
-                                </div>
-                            </div>
+
                         </div>
                     </div> <!-- .col-md-8 -->
                 </div>
