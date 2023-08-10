@@ -1,0 +1,10 @@
+
+/* product cards */
+.product-details h3{
+    font-size: 36px;
+    text-align: center;
+}
+.mr-2, .mr-4{
+    margin-right: 0.5rem;
+}
+/* single produnt end */

@@ -1,0 +1,44 @@
+
+.header-row{    
+    position: absolute;
+    top: 50px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 750px;
+    min-height: 105px;
+    background-image: url(../img/imgHeader/download.jpg);
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    z-index: 99;
+}
+.navbar-brand{
+    padding-left: 3%;
+}
+.shopName{
+    color: #ffffff44;
+    font-size: 14vw;
+    font-family: 'Montserrat', sans-serif;
+    
+}
+/* .shopName:before{
+        content: "";
+        background: rgba(#000, 0);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        transition: background 400ms;
+    } */
+/* fixx{
+    :before{
+        background: rgba(#000, 0.8);
+    }
+} */
+
+
