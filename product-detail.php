@@ -15,6 +15,10 @@ if (!$product_result) {
     exit();
 }
 
+//review
+$review_query = "SELECT * FROM review_table WHERE plant_id = $pid and status = 0 ORDER BY datetime desc";
+$review_result = executeResult($review_query);
+$forbidden_words = executeResult("SELECT * FROM forbidden_words");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -49,7 +53,30 @@ if (!$product_result) {
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- animation link -->
 
+    <!-- review -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
+    <style>
+        .progress-label-left {
+            float: left;
+            margin-right: 0.5em;
+            line-height: 1em;
+        }
+
+        .progress-label-right {
+            float: right;
+            margin-left: 0.3em;
+            line-height: 1em;
+        }
+
+        .star-light {
+            color: #e9ecef;
+        }
+    </style>
 </head>
 
 <body>
@@ -124,16 +151,14 @@ if (!$product_result) {
                     <div class="col-lg-6 product-details pl-md-5 ftco-animate">
                         <h3 style="font-size: 100px;"><?= $product_result['name'] ?></h3>
                         <div class="rating d-flex">
-                            <p class="text-left mr-4">
-                            <p class="mr-2">5.0</p>
-                            <div class="star">
-                                <i class="bx bxs-star checked"></i>
-                                <i class="bx bxs-star checked"></i>
-                                <i class="bx bxs-star "></i>
-                                <i class="bx bxs-star "></i>
-                                <i class="bx bxs-star "></i>
+                            <b><span id="average_rating">0.0</span> / 5</b>
+                            <div class="mb-3">
+                                <i class="fas fa-star star-light mr-1 main_star"></i>
+                                <i class="fas fa-star star-light mr-1 main_star"></i>
+                                <i class="fas fa-star star-light mr-1 main_star"></i>
+                                <i class="fas fa-star star-light mr-1 main_star"></i>
+                                <i class="fas fa-star star-light mr-1 main_star"></i> (<span id="total_review">0</span> Review)
                             </div>
-                            </p>
 
                             <p class="text-left mr-4">
                             <p class="mr-2" style="color: #000;">100 <span style="color: #bbb;">Rating</span></p>
@@ -194,6 +219,7 @@ if (!$product_result) {
                                 <h3>𝓡𝓮𝓿𝓲𝓮𝔀</h3>
                                 <p>Reviews of previous people.</p>
 
+                                <input type="hidden" name="plant_id" value="<?php echo $pid ?>">
                                 <button type="button" class="btn btn-seccess" data-bs-toggle="modal" data-bs-target="#myModal">
                                     + New review
                                 </button>
@@ -203,55 +229,103 @@ if (!$product_result) {
 
 
 
+                                <div id="review_content">
+                                    <hr style="margin: 15px 80px;">
+                                    <?php
+                                    // Định nghĩa số lượng đánh giá trên mỗi trang
+                                    $reviewsPerPage = 5;
+
+                                    // Tính toán tổng số trang
+                                    $totalReviews = count($review_result);
+                                    $totalPages = ceil($totalReviews / $reviewsPerPage);
+
+                                    // Xác định trang hiện tại
+                                    $currentpage = isset($_GET['page']) ? $_GET['page'] : 1;
+                                    $offset = ($currentpage - 1) * $reviewsPerPage;
+
+                                    // Lấy một phần danh sách đánh giá dựa trên trang hiện tại và số lượng đánh giá trên mỗi trang
+                                    $reviewsOnPage = array_slice($review_result, $offset, $reviewsPerPage);
+
+                                    $forbiddenWords = executeResult("SELECT list FROM forbidden_words");
+
+                                    foreach ($reviewsOnPage as $review) {
+
+                                        // ... Mã HTML để hiển thị đánh giá
+                                        // Truy cập các trường dữ liệu của review bằng cách sử dụng $review['tên trường']
+                                        $user_name = $review['user_name'];
+                                        $rating = isset($review['user_rating']) ? $review['user_rating'] : 'N/A';
+                                        $user_review = $review['user_review'];
+                                        $timestamp = $review['datetime'];
+                                        $formatted_review = nl2br($user_review);
+                                        $datetime = date('M d, Y', $timestamp);
+
+                                        // tu cam 
+                                        $formatted_review = nl2br($user_review);
+                                        foreach ($forbiddenWords as $forbiddenWord) {
+                                            $word = $forbiddenWord['list'];
+                                            if (stripos($formatted_review, $word) !== false) {
+                                                $formatted_review = str_ireplace($word, '***', $formatted_review);
+                                            }
+                                        }
+                                    ?>
+                                        <div class="row mb-3">
+                                            <div class="col-sm-12">
+                                                <div class="card" style="border: none">
+                                                    <div class="card-header">
+                                                        <?php
+                                                        for ($star = 1; $star <= 5; $star++) {
+                                                            $class_name = ($rating >= $star) ? 'text-warning' : 'star-light';
+                                                            echo '<i class="fas fa-star ' . $class_name . ' mr-1"></i>';
+                                                        } ?>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="review-header">
+                                                            <?php echo '<strong>' . $user_name . ' (</strong><small style="text-transform:lowercase;">cmt</small>)'; ?>
+                                                        </div>
+                                                        <?php echo '<p>' . $formatted_review . '</p>'; ?>
+                                                    </div>
+
+                                                    <?php echo '<div class="card-footer" style="font-size:13px;width:100%;"> ' . $datetime ?>
+
+                                                    <div style="float: right;">
+                                                        <a style="text-decoration: none;" href="delete-review.php?review_id= <?= $review["review_id"] ?> &pid= <?= $pid ?>">
+                                                            <button class="btn">
+                                                                <i class='bx bxs-trash-alt'></i>
+                                                            </button>
+                                                        </a>
+
+                                                        <!-- <a style="text-decoration: none;" href="">
+                                                            <button class="btn" type="button" name="edit_review" id="edit_review">
+                                                                <i class='bx bx-edit'></i>
+                                                            </button>
+                                                        </a> -->
+                                                    </div>
+                                                    <?php echo '</div>'; ?>
 
 
-                                <hr style="margin: 15px 80px;">
-                                <div class="row mb-3">
-                                    <div class="col-sm-12">
-                                        <div class="card" style="border: none">
-                                            <div class="card-header">
-                                                <!-- <i class="fas fa-star mr-1"></i> -->
-
-                                                <i class="bx bxs-star checked" id="submit_star_1" data-rating="1"></i>
-                                                <i class="bx bxs-star checked" id="submit_star_2" data-rating="2"></i>
-                                                <i class="bx bxs-star" id="submit_star_3" data-rating="3"></i>
-                                                <i class="bx bxs-star" id="submit_star_4" data-rating="4"></i>
-                                                <i class="bx bxs-star" id="submit_star_5" data-rating="5"></i>
-
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="review-header">
-                                                    <strong>Name (</strong><small style="text-transform:lowercase;">cmt</small>)
                                                 </div>
-                                                <p>review. . . </p>
-                                            </div>
-
-                                            <div class="card-footer" style="font-size:13px;width:100%;">On 19/07/2003
-
-                                                <div style="float: right;">
-                                                    <a style="text-decoration: none;" href="">
-                                                        <button class="btn">
-                                                            <i class='bx bxs-trash-alt'></i>
-                                                        </button>
-                                                    </a> |
-
-                                                    <a style="text-decoration: none;" href="">
-                                                        <button class="btn" type="button" name="edit_review" id="edit_review">
-                                                            <i class='bx bx-edit'></i>
-                                                        </button>
-                                                    </a>
-                                                </div>
-
-
                                             </div>
                                         </div>
-                                    </div>
+
+                                    <?php }
+                                    // Hiển thị phân trang
+                                    echo '<div class="pagination">';
+                                    if ($totalPages > 1) {
+                                        if ($currentpage > 1) {
+                                            echo '<a href="?pid=' . $pid . '&page=' . ($currentpage - 1) . '">Previous</a>';
+                                        }
+                                        for ($i = 1; $i <= $totalPages; $i++) {
+
+                                            echo '<a href="product-detail.php?pid=' . $pid . '&page=' . $i . '">' . $i . '</a>';
+                                        }
+                                        if ($currentpage < $totalPages) {
+                                            echo '<a href="product-detail.php?pid=' . $pid . '&page=' . ($currentpage + 1) . '">Next</a> ';
+                                        }
+                                    }
+                                    echo '</div>';
+                                    ?>
+
                                 </div>
-
-
-
-
-
 
 
 
@@ -277,6 +351,11 @@ if (!$product_result) {
                     <!-- The Modal -->
                     <div class="modal" id="myModal">
                         <div class="modal-dialog">
+                            <?php
+                            if (isset($c_id)) {
+                                $info = executeSingleResult("SELECT * FROM users WHERE user_id = $c_id");
+                            }
+                            ?>
                             <div class="modal-content">
 
                                 <!-- Modal Header -->
@@ -287,32 +366,36 @@ if (!$product_result) {
 
                                 <!-- Modal body -->
                                 <div class="modal-body">
-
+                                    <input type="hidden" name="plant_id" id="plant_id" class="form-control" value="<?php echo $pid ?>" />
 
                                     <h4 class="mt-2 mb-4">
-                                        <i class="bx bxs-star checked" id="submit_star_1" data-rating="1"></i>
-                                        <i class="bx bxs-star checked" id="submit_star_2" data-rating="2"></i>
-                                        <i class="bx bxs-star" id="submit_star_3" data-rating="3"></i>
-                                        <i class="bx bxs-star" id="submit_star_4" data-rating="4"></i>
-                                        <i class="bx bxs-star" id="submit_star_5" data-rating="5"></i>
+                                        <i class="fas fa-star star-light submit_star mr-1" id="submit_star_1" data-rating="1"></i>
+                                        <i class="fas fa-star star-light submit_star mr-1" id="submit_star_2" data-rating="2"></i>
+                                        <i class="fas fa-star star-light submit_star mr-1" id="submit_star_3" data-rating="3"></i>
+                                        <i class="fas fa-star star-light submit_star mr-1" id="submit_star_4" data-rating="4"></i>
+                                        <i class="fas fa-star star-light submit_star mr-1" id="submit_star_5" data-rating="5"></i>
                                     </h4>
 
-
+                                    <input type="hidden" name="c_id" id="c_id" value="<?php if (isset($info)) {
+                                                                                            echo $info['id'];
+                                                                                        } ?>">
 
                                     <div class="input-group mb-3">
                                         <span class="input-group-text" id="basic-addon1">@</span>
-                                        <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="text" name="user_name" id="user_name" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" <?php if (isset($_SESSION['user'])) {
+                                                                                                                                                                                                    echo 'value="' . $_SESSION['user']['fullname'] . '" readonly';
+                                                                                                                                                                                                } ?> />
                                     </div>
 
 
                                     <div class="input-group">
                                         <span class="input-group-text">With textarea</span>
-                                        <textarea class="form-control" aria-label="With textarea"></textarea>
+                                        <textarea class="form-control" aria-label="With textarea" name="user_review" maxlength="255" id="user_review"></textarea>
                                     </div>
 
                                     <br>
 
-                                    <div class="g-recaptcha" data-sitekey="6Le6YLAmAAAAADt-BWjqFOTkwFGnM38b-YAiCoW5"></div><br>
+                                    <div class="g-recaptcha" data-sitekey="6LfOCW0mAAAAAEFxgE1iG_mUt1rVdMQh5C9qP0DX"></div><br>
 
                                     <div class="form-group text-center mt-4">
                                         <button type="button" class="btn review-btn" id="save_review">Submit Review</button>
@@ -370,6 +453,150 @@ if (!$product_result) {
         AOS.init();
     </script>
 
+    <script>
+        $(document).ready(function() {
+
+            var rating_data = 0;
+            var isRatingSelected = false;
+
+            $('#add_review').click(function() {
+
+                $('#review_modal').modal('show');
+
+            });
+
+            $(document).on('mouseenter', '.submit_star', function() {
+
+                var rating = $(this).data('rating');
+                isRatingSelected = true;
+
+                reset_background();
+
+                for (var count = 1; count <= rating; count++) {
+
+                    $('#submit_star_' + count).addClass('text-warning');
+
+                }
+
+            });
+
+            function reset_background() {
+                for (var count = 1; count <= 5; count++) {
+
+                    $('#submit_star_' + count).addClass('star-light');
+
+                    $('#submit_star_' + count).removeClass('text-warning');
+
+                }
+            }
+
+            $(document).on('mouseleave', '.submit_star', function() {
+
+                reset_background();
+
+                for (var count = 1; count <= rating_data; count++) {
+
+                    $('#submit_star_' + count).removeClass('star-light');
+
+                    $('#submit_star_' + count).addClass('text-warning');
+                }
+
+            });
+
+            $(document).on('click', '.submit_star', function() {
+
+                rating_data = $(this).data('rating');
+
+            });
+
+            $('#save_review').click(function() {
+                var user_name = $('#user_name').val();
+                var user_review = $('#user_review').val();
+                var plant_id = $('#plant_id').val();
+                var id = $('#c_id').val();
+
+                if (user_name == '' || user_review == '') {
+                    alert("Please Fill Both Fields");
+                    return false;
+                } else if ((!isRatingSelected)) {
+                    alert("Please select a rating");
+                    return false;
+                } else {
+                    var gRecaptchaResponse = $('#g-recaptcha-response').val(); // Lấy giá trị của g-recaptcha-response
+
+                    $.ajax({
+                        url: "submit_rating.php",
+                        method: "POST",
+                        data: {
+                            'g-recaptcha-response': gRecaptchaResponse,
+                            'rating_data': rating_data,
+                            'user_name': user_name,
+                            'user_review': user_review,
+                            'plant_id': plant_id,
+                            'c_id': id
+                        },
+                        success: function(data) {
+                            $('#review_modal').modal('hide');
+                            load_rating_data();
+                            // alert(data);
+                            location.reload();
+                        }
+                    });
+                }
+            });
+
+            load_rating_data();
+
+            function load_rating_data() {
+                $.ajax({
+                    url: "submit_rating.php",
+                    method: "POST",
+                    data: {
+                        action: 'load_data',
+                        pid: <?php echo $pid ?>
+                    },
+                    dataType: "JSON",
+                    success: function(data) {
+                        $('#average_rating').text(data.average_rating);
+                        $('#total_review').text(data.total_review);
+
+                        var count_star = 0;
+
+                        $('.main_star').each(function() {
+                            count_star++;
+                            if (Math.ceil(data.average_rating) >= count_star) {
+                                $(this).addClass('text-warning');
+                                $(this).addClass('star-light');
+                            }
+                        });
+
+                        $('#total_five_star_review').text(data.five_star_review);
+
+                        $('#total_four_star_review').text(data.four_star_review);
+
+                        $('#total_three_star_review').text(data.three_star_review);
+
+                        $('#total_two_star_review').text(data.two_star_review);
+
+                        $('#total_one_star_review').text(data.one_star_review);
+
+                        $('#five_star_progress').css('width', (data.five_star_review / data.total_review) * 100 + '%');
+
+                        $('#four_star_progress').css('width', (data.four_star_review / data.total_review) * 100 + '%');
+
+                        $('#three_star_progress').css('width', (data.three_star_review / data.total_review) * 100 + '%');
+
+                        $('#two_star_progress').css('width', (data.two_star_review / data.total_review) * 100 + '%');
+
+                        $('#one_star_progress').css('width', (data.one_star_review / data.total_review) * 100 + '%');
+
+
+                    }
+                })
+            }
+
+        });
+    </script>
 </body>
 
 </html>
