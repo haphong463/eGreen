@@ -50,6 +50,23 @@ if (isset($_POST['add-cart'])) {
         vertical-align: middle;
         /* Căn giữa theo chiều dọc */
     }
+
+    input {
+        height: 100%;
+        background: transparent;
+        border: none;
+        outline: none;
+        border: 2px solid rgba(255, 255, 255, .2);
+        border-radius: 10px;
+        font-size: 16px;
+        color: black;
+        padding: 12px 20px 12px 20px;
+        box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    input::placeholder {
+        color: black;
+    }
 </style>
 
 <body>
@@ -104,31 +121,31 @@ if (isset($_POST['add-cart'])) {
                             <tbody>
 
                                 <?php
-                                $cart_query = executeResult("SELECT * FROM cart WHERE user_id = {$_SESSION['user']['user_id']}");
-                                foreach ($cart_query as $c) {
-                                    $name = executeSingleResult("SELECT * FROM plants WHERE plant_id = {$c['plant_id']}")['name'];
-                                    $price = executeSingleResult("SELECT * FROM plants WHERE plant_id = {$c['plant_id']}")['price'];
-                                    $subtotal = $c['quantity'] * $price;
-                                    $image = executeSingleResult("SELECT min(image_id) as image, image_path FROM image WHERE plant_id = {$c['plant_id']}")['image_path'];
-                                    echo '
-                                    
-                                    <tr>
+                                // $cart_query = executeResult("SELECT * FROM cart WHERE user_id = {$_SESSION['user']['user_id']}");
+                                // foreach ($cart_query as $c) {
+                                //     $name = executeSingleResult("SELECT * FROM plants WHERE plant_id = {$c['plant_id']}")['name'];
+                                //     $price = executeSingleResult("SELECT * FROM plants WHERE plant_id = {$c['plant_id']}")['price'];
+                                //     $subtotal = $c['quantity'] * $price;
+                                //     $image = executeSingleResult("SELECT min(image_id) as image, image_path FROM image WHERE plant_id = {$c['plant_id']}")['image_path'];
+                                //     echo '
 
-                                    <td hidden><input type="text" value="999999999999999999" readonly></td>
+                                //     <tr>
 
-                                    <td><img src="' . $image . '" alt="" style="width:90px;height:90px;border-radius: 30px;"></td>
+                                //     <td hidden><input type="text" value="999999999999999999" readonly></td>
 
-                                    <td><input hidden type="text" value="" name="petName" readonly>' . $name . '</td>
-                                    <td><input hidden type="text" value="" name="price" readonly>' . $price . '</td>
-                                    <td><input type="number" value="1" name="quantity[]"></td>
-                                    <td><input hidden type="text" value="" name="subtotal" readonly>' . $subtotal . '</td>
-                                    <!-- delete -->
-                                    <td class=\'product-remove\'><a href="delete-cart.php?id="><i class=\'bx bx-x-circle\'></i></a></td>
+                                //     <td><img src="' . $image . '" alt="" style="width:90px;height:90px;border-radius: 30px;"></td>
 
-                                </tr>
-                                    
-                                    ';
-                                }
+                                //     <td><input hidden type="text" value="" name="petName" readonly>' . $name . '</td>
+                                //     <td><input hidden type="text" value="" name="price" readonly>' . $price . '</td>
+                                //     <td><input type="number" value="1" name="quantity[]"></td>
+                                //     <td><input hidden type="text" value="" name="subtotal" readonly>' . $subtotal . '</td>
+                                //     <!-- delete -->
+                                //     <td class=\'product-remove\'><a href="delete-cart.php?id="><i class=\'bx bx-x-circle\'></i></a></td>
+
+                                // </tr>
+
+                                //     ';
+                                // }
                                 ?>
 
                             </tbody>
@@ -138,6 +155,7 @@ if (isset($_POST['add-cart'])) {
                         </button>
                         <button type="submit" name="updatecart" class="btn btn-outline-success delete-update">UpdateCart</button>
 
+                        <input type="text" style="float: right;" placeholder="Enter the cappon">
                     </form>
 
 
@@ -157,14 +175,14 @@ if (isset($_POST['add-cart'])) {
 
                             <span style="float: right;font-size: 25px;">
                                 $<?php
-                                    $subtotal = 0;
-                                    foreach ($cart_query as $c) {
-                                        $price = executeSingleResult("SELECT * FROM plants WHERE plant_id = {$c['plant_id']}")['price'];
-                                        $sale = executeSingleResult("SELECT * FROM plants WHERE plant_id = {$c['plant_id']}")['sale'];
-                                        $__price = isset($sale) ? $sale : $price;
-                                        $subtotal += $c['quantity'] * $__price;
-                                    }
-                                    echo number_format($subtotal, 2);
+                                    // $subtotal = 0;
+                                    // foreach ($cart_query as $c) {
+                                    //     $price = executeSingleResult("SELECT * FROM plants WHERE plant_id = {$c['plant_id']}")['price'];
+                                    //     $sale = executeSingleResult("SELECT * FROM plants WHERE plant_id = {$c['plant_id']}")['sale'];
+                                    //     $__price = isset($sale) ? $sale : $price;
+                                    //     $subtotal += $c['quantity'] * $__price;
+                                    // }
+                                    // echo number_format($subtotal, 2);
 
                                     ?>
                             </span>
@@ -191,8 +209,8 @@ if (isset($_POST['add-cart'])) {
                             <span style="font-size: 25px;">Total : </span>
                             <span style="float: right;font-size: 25px;">
                                 <?php
-                                $total = $subtotal;
-                                echo '$' . number_format($total, 2);
+                                // $total = $subtotal;
+                                // echo '$' . number_format($total, 2);
                                 ?>
                             </span>
 

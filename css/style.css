@@ -260,7 +260,7 @@ html{
     display: block;
     opacity: 0;
     position: absolute;
-    top: 10%;
+    top: 5%;
     margin-left: 0;
     width: 70px;
 
@@ -325,7 +325,7 @@ html{
 /* product cards end */
 
 
-
+/* 
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
 
@@ -388,6 +388,7 @@ a:hover {
 }
 
 .section-products #product .part-1::before {
+   
     background: url("../img/header/download.jpg") no-repeat center;
     background-size: cover;
 		transition: all 0.3s;
@@ -491,4 +492,4 @@ a:hover {
     .delete-update{
         font-size:6px;
     }
-} */
+} */ */
