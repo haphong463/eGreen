@@ -55,39 +55,42 @@
     </div>
     <!-- home Section End-->
 
-<br><br><br>
+    <br><br><br>
     <div class="container">
-    <div class="row">
-        <div class="col-lg-6 mb-5 ftco-animate">
-            <div id="carouselExampleInterval" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    <div class="carousel-item active" data-bs-interval="10000">
-                        <img src="img/header/download.jpg" class="d-block w-100" style="height: 70vh;" alt="...">
+        <div class="row">
+            <div class="col-lg-6 mb-5 ftco-animate">
+                <div id="carouselExampleInterval" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active" data-bs-interval="10000">
+                            <img src="img/header/download.jpg" class="d-block w-100" style="height: 70vh;" alt="...">
+                        </div>
+
                     </div>
+                </div>
+
+            </div>
+            <div class="col-lg-6 product-details pl-md-5 ftco-animate">
+                <h3 style="font-size: 100px;">mlem</h3>
+                <div class="rating">
+
+                    <p class="text-left mr-4">
+                    <p class="mr-2" style="color: #000;font-size:30px;">VIP <span style="color: #bbb;">1907 </span><span style="float: right;">0961188956</span></p>
+                    </p>
 
                 </div>
-            </div>
-
-        </div>
-        <div class="col-lg-6 product-details pl-md-5 ftco-animate">
-            <h3 style="font-size: 100px;">mlem</h3>
-            <div class="rating">
-            
-                <p class="text-left mr-4">
-                <p class="mr-2" style="color: #000;font-size:30px;">VIP <span style="color: #bbb;">1907 </span><span style="float: right;">0961188956</span></p>
+                <p style="font-size: 40px;"><span>Email : trnfkbgrgzr@gmail.com</span></p>
+                <p style="font-size: 40px;">Address : 68876/65 cmt8 p100 HCM City</p>
+                <p class="text-center" style="text-align: center;">
+                    <a href="#" class="btn btn-outline-danger" style="width: 10%;float:right;"><i class='bx bxs-trash'></i></a>
+                    <a href="#" class="btn btn-outline-success" style="width: 89%;"><i class='bx bx-pencil'></i></a>
                 </p>
-                
+
             </div>
-            <p style="font-size: 40px;"><span>Email : trnfkbgrgzr@gmail.com</span></p>
-            <p style="font-size: 40px;">Address : 68876/65 cmt8 p100 HCM City</p>
+
+
 
 
         </div>
-
-
-
-
-    </div>
 
     </div>
 
