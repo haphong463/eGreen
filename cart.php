@@ -160,7 +160,9 @@ if (isset($_POST['add-cart'])) {
                                     $subtotal = 0;
                                     foreach ($cart_query as $c) {
                                         $price = executeSingleResult("SELECT * FROM plants WHERE plant_id = {$c['plant_id']}")['price'];
-                                        $subtotal += $c['quantity'] * $price;
+                                        $sale = executeSingleResult("SELECT * FROM plants WHERE plant_id = {$c['plant_id']}")['sale'];
+                                        $__price = isset($sale) ? $sale : $price;
+                                        $subtotal += $c['quantity'] * $__price;
                                     }
                                     echo number_format($subtotal, 2);
 
@@ -172,7 +174,7 @@ if (isset($_POST['add-cart'])) {
                         <p>
                             <span style="font-size: 25px;">Delivery : </span>
                             <span style="float: right;font-size: 25px;">
-                                100.00
+                                Free
                             </span>
                         </p>
                         <!-- LONG -->
@@ -188,7 +190,10 @@ if (isset($_POST['add-cart'])) {
                         <p class="total-price">
                             <span style="font-size: 25px;">Total : </span>
                             <span style="float: right;font-size: 25px;">
-                                98.00 $
+                                <?php
+                                $total = $subtotal;
+                                echo '$' . number_format($total, 2);
+                                ?>
                             </span>
 
 
@@ -196,7 +201,6 @@ if (isset($_POST['add-cart'])) {
                     </div>
                     <p class="text-center" style="text-align: center;">
                         <a href="checkout.php" class="btn btn-outline-success" style="width:70%;">Pay</a>
-
                     </p>
                 </div>
             </div>
