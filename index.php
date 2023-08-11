@@ -1,9 +1,18 @@
 <?php 
 session_start();
+require_once('db/dbhelper.php');
 if(isset($_SESSION['user'])){
-
-}else{
-    header('location:user-login.php');
+    $user = $_SESSION['user'];
+    $user_id = $user['user_id'];
+}
+// else{
+//     header('location:user-login.php');
+// }
+$plants = executeResult("SELECT * FROM plants");
+if(isset($_POST['addtowishlist'])){
+    $p_id = $_POST['plant_id'];
+    $sql = "INSERT INTO whistlish (p_id,user_id) VALUES ('$p_id','$user_id')";
+    execute($sql);
 }
 ?>
 <!DOCTYPE html>
@@ -19,6 +28,10 @@ if(isset($_SESSION['user'])){
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     <!-- BStrap link -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bao gồm tệp JavaScript -->
+    
+<!-- AJAX -->
 
 
     <link rel="stylesheet" href="css/header.css">
@@ -37,7 +50,7 @@ if(isset($_SESSION['user'])){
 
 </head>
 
-<body>
+<body style="background-color: #000000;">
 
 
 
@@ -89,37 +102,53 @@ if(isset($_SESSION['user'])){
         <div class="container">
             <h1>ℙ 𝕃 𝔸 ℕ 𝕋 𝕊</h1>
             <div class="row" style="margin-top: 50px;">
-                <div class="col-md-3 py-3 py-md-0">
-                    <div class="card">
-                        <div class="overlay">
-                            <button type="button" class="btn btn-secondary" title="Quick View">
-                                <i class='bx bx-show'></i>
-                            </button>
-                            <button type="button" class="btn btn-secondary" title="Add to Wishlish">
-                                <i class='bx bx-heart'></i>
-                            </button>
-                            <button type="button" class="btn btn-secondary" title="Add to Cart">
-                                <i class='bx bx-expand'></i>
-                            </button>
-                        </div>
-                        <a href="product-detail.php"><img src="img/header/download.jpg" alt=""></a>
-                        <div class="card-body">
-                            <h3>Hoa Cuc</h3>
-                            <div class="star">
-                                <i class="bx bxs-star checked"></i>
-                                <i class="bx bxs-star checked"></i>
-                                <i class="bx bxs-star "></i>
-                                <i class="bx bxs-star "></i>
-                                <i class="bx bxs-star "></i>
+                                <?php
+
+                                foreach ($plants as $plant) {
+                                    $image = executeSingleResult("SELECT min(image_id) as image, image_path FROM image WHERE plant_id = {$plant['plant_id']}")['image_path'];
+                                    echo '
+                            
+                            <div class="col-md-4 py-4 py-md-0">
+                            <div class="card">
+                                <div class="overlay">
+                                    <button type="button" class="btn btn-secondary" title="Quick View">
+                                        <i class=\'bx bx-show\'></i>
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" title="Add to Wishlish">
+                                        <i class=\'bx bxs-heart\></i>
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" title="Add to Cart">
+                                        <i class=\bx bxs-shopping-bag\'></i>
+                                    </button>
+                                </div>
+                                <a href="product-detail.php?pid=' . $plant['plant_id'] . '"><img src="' . $image . '" alt=""></a>
+                                    <div class="card-body">
+                                        <h3>con két</h3>
+                                        <div class="star">
+                                            <i class="bx bxs-star checked"></i>
+                                            <i class="bx bxs-star checked"></i>
+                                            <i class="bx bxs-star "></i>
+                                            <i class="bx bxs-star "></i>
+                                            <i class="bx bxs-star "></i>
+                                        </div>
+                                        <p>' . $plant['description'] . '</p>
+                                        <h6>' . $plant['price'] . '<span><button>Add Cart</button></span></h6>
+                                    </div>
                             </div>
-                            <p>hello my name is bobu, nice to meet you heh hihi !</p>
-                            <h6>$50.09<span><button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Add Cart</button></span></h6>
-                        </div>
-                    </div>
-                </div>
+                        </div>  
+                        <form action="" method="post" class="wishlist-form">
+    <input type="hidden" name="plant_id" value="' . $plant['plant_id'] . '">
+    <button type="submit" class="btn btn-secondary" title="Add to Wishlist" name="addtowishlist">
+        <i class=\'bx bxs-heart\'></i> Add to Wishlist
+    </button>
+</form>
+                            ';
+                                }
+
+                                ?>
 
 
-            </div>
+                            </div>
         </div>
     </section>
 
@@ -131,36 +160,57 @@ if(isset($_SESSION['user'])){
         <div class="container">
             <h1>ℍ 𝕆 𝕋</h1>
             <section class="section-products">
-                <div class="container">
+            <div class="container">
+                            <h1>All Products In Store</h1>
+                            <div class="row" style="margin-top: 50px;">
+                                <?php
 
-                    <div class="row">
+                                foreach ($plants as $plant) {
+                                    $image = executeSingleResult("SELECT min(image_id) as image, image_path FROM image WHERE plant_id = {$plant['plant_id']}")['image_path'];
+                                    echo '
+                            
+                            <div class="col-md-4 py-4 py-md-0">
+                            <div class="card">
+                                <div class="overlay">
+                                    <button type="button" class="btn btn-secondary" title="Quick View">
+                                        <i class=\'bx bx-show\'></i>
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" title="Add to Wishlish">
+                                        <i class=\'bx bxs-heart\></i>
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" title="Add to Cart">
+                                        <i class=\bx bxs-shopping-bag\'></i>
+                                    </button>
+                                </div>
+                                <a href="product-detail.php?pid=' . $plant['plant_id'] . '"><img src="' . $image . '" alt=""></a>
+                                    <div class="card-body">
+                                        <h3>con két</h3>
+                                        <div class="star">
+                                            <i class="bx bxs-star checked"></i>
+                                            <i class="bx bxs-star checked"></i>
+                                            <i class="bx bxs-star "></i>
+                                            <i class="bx bxs-star "></i>
+                                            <i class="bx bxs-star "></i>
+                                        </div>
+                                        <p>' . $plant['description'] . '</p>
+                                        <h6>' . $plant['price'] . '<span><button>Add Cart</button></span></h6>
+                                    </div>
+                            </div>
+                        </div>  
+                        <form action="" method="post" class="wishlist-form">
+    <input type="hidden" name="plant_id" value="' . $plant['plant_id'] . '">
+    <button type="button" class="btn btn-secondary add-to-wishlist-btn" title="Add to Wishlist">
+        <i class=\'bx bxs-heart\'></i> Add to Wishlist
+    </button>
+</form>
+                            ';
+                                }
 
-                        <!-- Single Product -->
-                        <div class="col-md-6 col-lg-4 col-xl-3">
-                            <div id="product" class="single-product">
-                                <div class="part-1"><a href="product-detail.php"></a>
-                                    <ul>
-                                        <li>
-                                            <a href="#">
-                                                <i class='bx bx-shopping-bag'  type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                                                </i>
-                                            </a>
-                                        </li>
-                                        <li><a href="#"><i class='bx bx-heart'></i></a></li>
-                                        <li><a href="product-detail.php"><i class='bx bx-show'></i></a></li>
-                                        <li><a href="#"><i class='bx bx-expand'></i></a></li>
-                                    </ul>
-                                </div>
-                                <div class="part-2">
-                                    <h3 class="product-title">Here Product Title</h3>
-                                    <h4 class="product-old-price">$79.99</h4>
-                                    <h4 class="product-price" style="color: #ffffff;">$49.99</h4>
-                                </div>
+                                ?>
+
+
                             </div>
                         </div>
-
-                    </div>
-                </div>
             </section>
         </div>
     </section>
@@ -210,6 +260,8 @@ if(isset($_SESSION['user'])){
     <script>
         AOS.init();
     </script>
+
+
 
 </body>
 
