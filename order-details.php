@@ -1,3 +1,39 @@
+<?php
+require_once 'db/dbhelper.php';
+session_start();
+if (isset($_GET['order_id'])) {
+    $order_id = $_GET['order_id'];
+    $order_query = "SELECT * FROM order_details WHERE order_id = '$order_id'";
+    $order_result = executeResult($order_query);
+
+    if (!empty($order_result)) {
+        foreach ($order_result as $order) {
+            $product_id =  $order['plant_id'];
+        }
+        // Lấy thông tin sản phẩm từ bảng "product" dựa trên các tên sản phẩm đã tách được
+
+        $product_query = "SELECT plant_id, category_id, name, price FROM plants WHERE plant_id = $product_id";
+        $product_result = executeResult($product_query);
+    }
+
+    // Sử dụng thông tin sản phẩm trong mảng $products để hiển thị trong trang Order Details
+
+    $sql4 = "SELECT * FROM orders WHERE order_id = '$order_id'";
+    $total = executeSingleResult($sql4);
+
+    $sql5 = "SELECT * FROM coupon WHERE coupon_code = '{$total['voucher']}'";
+    $coupon = executeSingleResult($sql5);
+    $code = isset($coupon['coupon_code']) ? "(Code: " . $coupon['coupon_code'] . ")" : '';
+
+    if (!isset($total)) {
+        echo '<script>window.location.href = "details.php";</script>';
+        exit();
+    }
+
+    $order_date = $total['order_date'];
+} else {
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -116,11 +152,6 @@
         cursor: pointer;
         display: block;
         margin-bottom: 5px;
-    }
-
-    ::selection {
-        background-color: #333;
-        color: #fff;
     }
 
     #review,
@@ -724,7 +755,7 @@
         <div class="header-row">
             <div class="header-row-inside">
 
-                <h1 class="shopName">Order Details</h1>
+                <h1 class="shopName">Order #<?= $order_id ?></h1>
                 <div class="header-row__button">
                     <a href="#" class="btn"></a>
                 </div>
@@ -734,7 +765,7 @@
     </div>
     <!-- home Section End-->
 
-<br><br><br>
+    <br><br><br>
     <div class="container">
         <div class="table-responsive">
             <table class="table">
@@ -747,54 +778,87 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <?php
+                    $subtotal = 0;
+                    foreach ($order_result as $order) {
+                        $plants = executeSingleResult("SELECT * FROM plants WHERE plant_id = {$order['plant_id']}");
+                        $quantity = $order['quantity'];
+                        $name = $plants['name'];
+                        $category = executeSingleResult("SELECT * FROM categories WHERE category_id = {$plants['category_id']}");
+                        $image = executeSingleResult("SELECT min(thumbnail_id) as thumbnail, thumbnail_path FROM thumbnail WHERE plant_id = {$order['plant_id']}")['thumbnail_path'];
 
 
+                        $__price = $order['price'];
+
+                        $total_amount_item = $quantity * $__price;
+                        $subtotal += $total_amount_item;
+                        echo '
+                    
                     <tr>
 
-                        <td>
-                            <div class="product-info">
-                                <div class="product-image">
-                                    <img src="img/Daisies.jpg" width="250px" height="250px" alt="Product Image">
-                                </div>
-                                <div class="product-details">
-                                    <h4 class="product-name">Hoa cuc</h4>
-                                    <p class="product-info">Color : Vang</p>
-                                    <p class="product-info">Type : mlem mlem</p>
-                                </div>
+                    <td>
+                        <div class="product-info">
+                            <div class="product-image">
+                                <img src="' . $image . '" width="250px" height="250px" alt="Product Image">
                             </div>
-                        </td>
+                            <div class="product-details">
+                                <h4 class="product-name">' . $name . '</h4>
+                                <p class="product-info">' . $category['name'] . '</p>
+                            </div>
+                        </div>
+                    </td>
 
-                        <td>$999</td>
-                        <td>10</td>
-                        <td>$9990</td>
-                    </tr>
+                    <td>$' . $plants['price'] . '</td>
+                    <td>' . $quantity . '</td>
+                    <td>$' . number_format($total_amount_item, 2) . '</td>
+                </tr>
+                    
+                    ';
+                    }
+
+                    ?>
 
                 </tbody>
-
                 <tfoot>
 
                     <tr>
                         <td colspan="3"><b>Sub Total :</b></td>
-                        <td>$999</td>
+                        <td>$<?= number_format($subtotal, 2) ?></td>
                     </tr>
                     <tr>
-                        <td colspan="3"><b>Discount $%$%@%^^# :</b></td>
-                        <td>50%</td>
+                        <td colspan="3"><b>Discount <?= $code ?> :</b></td>
+                        <td><?= number_format(isset($coupon['discount']) ? $coupon['discount'] : 0, 2) ?>%</td>
                     </tr>
                     <tr>
                         <td colspan="3"><b>Shipping Fee :</b></td>
-                        <td>$99</td>
+                        <td>Free</td>
                     </tr>
 
                     <tr>
                         <td colspan="3"><b>Total :</b></td>
-                        <td><b>$99</b></td>
+                        <td><b>$<?= $total['total_amount'] ?></b></td>
                     </tr>
                 </tfoot>
             </table>
 
             <!-- Button to open the pop-up -->
+            <?php
+            if ($total['status'] == "Place Order") {
+                echo '
+                    
             <a class="order_back review-btn pull-right" href="#" onclick="openPopup()">CANCEL ORDER</a>
+                    
+                    
+                    ';
+            } elseif ($total['status'] == "Delivered") {
+                echo '
+                
+                <a class="order_back review-btn pull-right" href="#" onclick="openPopup2()">Returns</a>
+
+                
+                ';
+            }
+            ?>
 
             <!-- The pop-up -->
             <div class="popup" id="popup">
@@ -819,6 +883,21 @@
                 </div>
             </div>
 
+            <div class="popup" id="return">
+                <div class="popup-content">
+                    <h4>Returns</h4>
+                    <p>Please write a reason (50 characters...):</p>
+                    <form action="cancel-order-process.php" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="order_id" value="<?= $order_id ?>">
+                        <textarea class="form-control" name="reason" id="" cols="30" rows="5"></textarea>
+                        <input class="form-control mt-3" type="file" name="image">
+                        <div class="popup-buttons">
+                            <button type="submit" name="returns" class="confirm-btn">Send</a>
+                            <button type="button" onclick="closePopup2()" class="cancel-btn">No</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -832,7 +911,16 @@
             document.getElementById('popup').classList.remove('show');
         }
     </script>
+    <script>
+        function openPopup2() {
+            document.getElementById('return').classList.add('show');
+        }
 
+        // Close the pop-up
+        function closePopup2() {
+            document.getElementById('return').classList.remove('show');
+        }
+    </script>
 
     <?php
     include('part/footer.php');
