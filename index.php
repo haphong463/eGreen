@@ -114,9 +114,12 @@ if(isset($_POST['addtowishlist'])){
                                     <button type="button" class="btn btn-secondary" title="Quick View">
                                         <i class=\'bx bx-show\'></i>
                                     </button>
-                                    <button type="button" class="btn btn-secondary" title="Add to Wishlish">
-                                        <i class=\'bx bxs-heart\></i>
+                                    <form action="" method="post" class="wishlist-form">
+                                    <input type="hidden" name="plant_id" value="' . $plant['plant_id'] . '">
+                                    <button type="submit" class="btn btn-secondary" title="" name="addtowishlist">
+                                        <i class=\'bx bxs-heart\'></i>
                                     </button>
+                                </form>
                                     <button type="button" class="btn btn-secondary" title="Add to Cart">
                                         <i class=\bx bxs-shopping-bag\'></i>
                                     </button>
@@ -136,12 +139,7 @@ if(isset($_POST['addtowishlist'])){
                                     </div>
                             </div>
                         </div>  
-                        <form action="" method="post" class="wishlist-form">
-    <input type="hidden" name="plant_id" value="' . $plant['plant_id'] . '">
-    <button type="submit" class="btn btn-secondary" title="Add to Wishlist" name="addtowishlist">
-        <i class=\'bx bxs-heart\'></i> Add to Wishlist
-    </button>
-</form>
+                      
                             ';
                                 }
 
@@ -175,9 +173,12 @@ if(isset($_POST['addtowishlist'])){
                                     <button type="button" class="btn btn-secondary" title="Quick View">
                                         <i class=\'bx bx-show\'></i>
                                     </button>
-                                    <button type="button" class="btn btn-secondary" title="Add to Wishlish">
-                                        <i class=\'bx bxs-heart\></i>
+                                    <form action="" method="post" class="wishlist-form">
+                                    <input type="hidden" name="plant_id" value="' . $plant['plant_id'] . '">
+                                    <button type="button" class="btn btn-secondary add-to-wishlist-btn" title="" name="addtowishlist">
+                                        <i class=\'bx bxs-heart\'></i>
                                     </button>
+                                </form>
                                     <button type="button" class="btn btn-secondary" title="Add to Cart">
                                         <i class=\bx bxs-shopping-bag\'></i>
                                     </button>
@@ -197,12 +198,7 @@ if(isset($_POST['addtowishlist'])){
                                     </div>
                             </div>
                         </div>  
-                        <form action="" method="post" class="wishlist-form">
-    <input type="hidden" name="plant_id" value="' . $plant['plant_id'] . '">
-    <button type="button" class="btn btn-secondary add-to-wishlist-btn" title="Add to Wishlist">
-        <i class=\'bx bxs-heart\'></i> Add to Wishlist
-    </button>
-</form>
+
                             ';
                                 }
 
