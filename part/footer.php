@@ -18,3 +18,22 @@
     </div>
 </footer>
 <!-- footer end -->
+
+
+<button id="showButton" class="button-48" role="button"><span class="text">ChatBot</span></button>
+
+
+<script src="script.js"></script>
+<script>
+    const showButton = document.getElementById('showButton');
+    const hiddenDiv = document.getElementById('hiddenDiv');
+    const hideButton = document.getElementById('hideButton');
+
+    showButton.addEventListener('click', () => {
+        hiddenDiv.style.display = 'block';
+    });
+
+    hideButton.addEventListener('click', () => {
+        hiddenDiv.style.display = 'none';
+    });
+</script>
