@@ -14,9 +14,9 @@
                 </a>
             </li>
             <li><a href="admin.php">
-                <i class="uil uil-brightness"></i>
-                        <span class="link-name">Admin</span>
-                    </a></li>
+                    <i class="uil uil-brightness"></i>
+                    <span class="link-name">Admin</span>
+                </a></li>
 
             <li><a href="category.php">
                     <i class="uil uil-file"></i>
@@ -35,6 +35,10 @@
             <li><a href="inventory.php">
                     <i class="uil uil-user"></i>
                     <span class="link-name">Inventory</span>
+                </a></li>
+            <li><a href="about.php">
+                    <i class="uil uil-user"></i>
+                    <span class="link-name">About</span>
                 </a></li>
         </ul>
 
