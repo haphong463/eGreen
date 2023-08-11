@@ -1,3 +1,18 @@
+<?php 
+session_start();
+require_once('db/dbhelper.php');
+if(isset($_SESSION['user'])){
+$user = $_SESSION['user'];
+$user_id = $user['user_id'];
+$sql = "SELECT * FROM users WHERE user_id='$user_id'";
+$infor = executeSingleResult($sql);
+// var_dump($infor);
+// echo $infor['username'];
+// die();
+}
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -70,20 +85,21 @@
 
             </div>
             <div class="col-lg-6 product-details pl-md-5 ftco-animate">
-                <h3 style="font-size: 100px;">mlem</h3>
+                <h3 style="font-size: 100px;"><?php echo $infor['username']; ?></h3>
                 <div class="rating">
 
                     <p class="text-left mr-4">
-                    <p class="mr-2" style="color: #000;font-size:30px;">VIP <span style="color: #bbb;">1907 </span><span style="float: right;">0961188956</span></p>
+                    <p class="mr-2" style="color: #000;font-size:30px;">VIP <span style="color: #bbb;">1907 </span><span style="float: right;"><?php echo $infor['phone']; ?></span></p>
                     </p>
 
                 </div>
-                <p style="font-size: 40px;"><span>Email : trnfkbgrgzr@gmail.com</span></p>
-                <p style="font-size: 40px;">Address : 68876/65 cmt8 p100 HCM City</p>
+                <p style="font-size: 40px;"><span><?php echo $infor['email']; ?></span></p>
+                <p style="font-size: 40px;"><?php echo $infor['fullname']; ?></p>
+                <p style="font-size: 40px;"><?php echo $infor['address']; ?></p>
 
                 <p class="text-center" style="text-align: center;">
                     <a href="#" class="btn btn-outline-danger" style="width: 10%;float:right;"><i class='bx bxs-trash'></i></a>
-                    <a href="#" class="btn btn-outline-success" style="width: 89%;"><i class='bx bx-pencil'></i></a>
+                    <a href="userEdit.php" class="btn btn-outline-success" style="width: 89%;"><i class='bx bx-pencil'></i></a>
                 </p>
             </div>
 

@@ -1,3 +1,22 @@
+<?php 
+session_start();
+require_once('db/dbhelper.php');
+if(isset($_SESSION['user'])){
+$user = $_SESSION['user'];
+$user_id = $user['user_id'];
+$sql = "SELECT * FROM users WHERE user_id='$user_id'";
+$infor = executeSingleResult($sql);
+}
+if(isset($_POST['change'])){
+$username = $_POST['username'];
+$fullname = $_POST['fullname'];
+$address = $_POST['address'];
+$phone = $_POST['phone'];
+$sql = "UPDATE users SET username='$username', fullname ='$fullname', address='$address',phone='$phone' WHERE user_id='$user_id' ";
+execute($sql);
+header("location:user.php");
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -24,19 +43,19 @@
     include('part/header.php');
     ?>
     <div class="wrapper">
-        <form action="">
+        
             <h1>Change Information</h1>
-
+<form action="" method="post">
             <div class="row">
                 <div class="col-lg-6">
                     <div class="input-box">
-                        <input type="text" placeholder="Username">
+                        <input type="text" name="username" placeholder="Username" value="<?php echo $infor['username'] ?>">
                         <i class='bx bxs-user'></i>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="input-box">
-                        <input type="email" placeholder="Email">
+                        <input type="text" name="fullname" placeholder="fullname" value="<?php echo $infor['fullname'] ?>">
                         <i class='bx bxs-envelope'></i>
                     </div>
                 </div>
@@ -46,31 +65,22 @@
 
 
             <div class="input-box">
-                <input type="text" placeholder="Address">
+                <input type="text" name="address" placeholder="Address" value="<?php echo $infor['address'] ?>">
                 <i class='bx bxs-phone'></i>
             </div>
 
             <div class="row">
-                <div class="col-lg-6">
+                <div class="col-lg-12">
                     <div class="input-box">
-                        <input type="text" placeholder="Phone">
+                        <input type="text" name="phone" placeholder="Phone" value="<?php echo $infor['phone'] ?>">
                         <i class='bx bxs-user'></i>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="input-box">
-                        <input type="password" placeholder="Password">
-                        <i class='bx bxs-envelope'></i>
                     </div>
                 </div>
             </div>
             <br>
-            <div class="remember-forgot">
-                <label><input type="checkbox">Remember me</label>
-                <!-- <a href="#">Automatic Password</a> -->
-            </div>
 
-            <button type="submit" class="btn">Change</button>
+
+            <button type="submit" class="btn" name="change">Change</button>
 
         </form>
     </div>

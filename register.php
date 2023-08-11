@@ -128,7 +128,7 @@ if (isset($_POST['create'])) {
 
 
 
-        $sql = "INSERT INTO users(username,fullname,phone,email,status,password,Type,role) VALUES ('$username','$fullname','$phone','$email',2,'$pass','user',3)";
+        $sql = "INSERT INTO users(username,fullname,phone,address,email,status,password,Type,role) VALUES ('$username','$fullname','$phone','$address','$email',2,'$pass','user',3)";
         execute($sql);
         $_SESSION['email'] = $email;
 
@@ -157,11 +157,11 @@ if (isset($_POST['create'])) {
             echo '<p>' . $error . '<p/>';
         } else {
             echo "<script>alert('Your mail has been sent,please check your mail to verify');
-                
+            window.location.href = 'user-login.php';
                 </script>";
         }
     }
-    header('location:user-login.php');
+ 
 }
 
 ?>
