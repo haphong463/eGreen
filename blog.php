@@ -148,7 +148,8 @@ $post_resutl = executeResult($query);
 
                         foreach ($blogsOnPage as $b) {
                             $bid = $b['blog_id'];
-                            $type = $b['type'];
+                            // $type = $b['type'];
+                            $type = executeSingleResult("SELECT * FROM blog_category WHERE blog_category_id = {$b['blog_category_id']}")['name'];
                             $title = $b['title'];
                             $content = $b['content'];
                             $img = $b['img'];

@@ -7,7 +7,7 @@ $bid = $_GET['blog_id'];
 $sql = "SELECT * FROM blog WHERE blog_id = $bid ";
 $blog_result =  executeSingleResult($sql);
 $b_id = $blog_result['blog_id'];
-$type = $blog_result['type'];
+$type = $blog_result['blog_category_id'];
 $title = $blog_result['title'];
 $content = $blog_result['content'];
 $img = $blog_result['img'];
@@ -283,7 +283,18 @@ $cmt_result = executeResult($sql2);
 
                     <img src="<?php echo $img ?>" style="width: 100%;height:60vh;" alt="">
 
-                    <p style="width: 100%;text-align:left;"><i class='bx bxs-comment'></i> 9 <span style="float:right;"><i class='bx bxs-watch'></i> <?php echo $date ?></span></p>
+                    <p style="width: 100%;text-align:left;">
+                        <i class='bx bxs-comment'></i>
+                        <?php
+                        $query1 = "SELECT COUNT(*) AS total FROM comments WHERE blog_id = $b_id";
+                        $result1 = executeSingleResult($query1);
+                        if ($result1 != NULL) {
+                            $total = $result1["total"];
+                            echo $total . " Comments";
+                        }
+                        ?>
+                        <span style="float:right;"><i class='bx bxs-watch'></i> <?php echo $date ?></span>
+                    </p>
 
                     <h1><?php echo $title ?></h1>
                     <h6 style="text-align:left;">
@@ -322,7 +333,7 @@ $cmt_result = executeResult($sql2);
 
 
                     <hr style=" width:100%;">
-                    
+
 
                     <!--show cmt -->
                     <?php
@@ -332,13 +343,25 @@ $cmt_result = executeResult($sql2);
                         global $info;
                         $sql = "SELECT * FROM comments WHERE parent_id = " . $parent_id . ' and blog_id = ' . $bid . ' ORDER BY id DESC';
                         $result = executeResult($sql);
+
                     ?>
                         <div class="col-lg-12">
                             <div class="comment-area card border-0 m-5">
                                 <?php if (count($result) > 0) { ?>
                                     <ul class="comment-tree list-unstyled ">
                                         <?php
+
+                                        $forbiddenWords = executeResult("SELECT list FROM forbidden_words");
+
                                         foreach ($result as $row) {
+                                            // tu cam 
+                                            $formatted_review = nl2br($row['content']);
+                                            foreach ($forbiddenWords as $forbiddenWord) {
+                                                $word = $forbiddenWord['list'];
+                                                if (stripos($formatted_review, $word) !== false) {
+                                                    $formatted_review = str_ireplace($word, '***', $formatted_review);
+                                                }
+                                            }
                                         ?>
                                             <li class="">
                                                 <div class="comment-area-box">
@@ -346,7 +369,7 @@ $cmt_result = executeResult($sql2);
                                                     <h5 class=""><?php echo $row['name'] ?></h5>
 
                                                     <div class="comment-content mt-2" id="comment-content-<?php echo $row['id'] ?>">
-                                                        <?php echo $row['content'] ?>
+                                                        <?php echo $formatted_review ?>
                                                     </div>
 
                                                     <span><?php echo date('F d, Y', strtotime($row['datetime'])); ?></span>
@@ -401,7 +424,7 @@ $cmt_result = executeResult($sql2);
                     }
 
                     // Hiển thị comment
-                    displayComments();
+                    displayComments();  
                     ?>
 
                 </div>
