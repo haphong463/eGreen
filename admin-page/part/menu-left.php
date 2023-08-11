@@ -13,6 +13,10 @@
                     <span class="link-name">Dashboard</span>
                 </a>
             </li>
+            <li><a href="admin.php">
+                <i class="uil uil-brightness"></i>
+                        <span class="link-name">Admin</span>
+                    </a></li>
 
             <li><a href="category.php">
                     <i class="uil uil-file"></i>
