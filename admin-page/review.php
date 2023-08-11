@@ -62,7 +62,7 @@ $review = executeResult($sql);
                     if ($review != null) {
                         foreach ($review as $r) {
                     ?>
-
+                            </tr>
                             <td><?php echo $r['user_name'] ?></td>
                             <td><?php echo $r['user_rating'] ?></td>
                             <td><?php $review = $r['user_review'];
