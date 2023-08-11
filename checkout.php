@@ -10,10 +10,21 @@ function generateOrderCode()
     }
     return $orderCode;
 }
-if (!isset($_SESSION['user'])) {
-    header('Location: user-login.php');
+if (isset($_SESSION['user'])) {
+    $user_id = $_SESSION['user_id'];
+} elseif (isset($_SESSION['user_token'])) {
+    $user_token = $_SESSION['user_token'];
+    $user = executeSingleResult("SELECT * FROM users WHERE token = '$user_token'");
+    $user_id = $user['user_id'];
+}else{
+    header("Location: user-login.php");
 }
-$cart_query = executeResult("SELECT * FROM cart WHERE user_id = {$_SESSION['user']['user_id']}");
+
+$user = executeSingleResult("SELECT * FROM users WHERE user_id = $user_id");
+if($user['address'] == NULL || $user['phone'] == NULL){
+    header('Location: useredit.php');
+}
+$cart_query = executeResult("SELECT * FROM cart WHERE user_id = $user_id");
 if ($cart_query == NULL) {
     header("Location: index.php");
 }
@@ -115,9 +126,9 @@ if ($cart_query == NULL) {
                                                     <div class="col-md-12">
                                                         <div class="checkbox">
                                                             <label style="width:100%;">
-                                                                <input type="text" <?php if (isset($_SESSION['user'])) {
-                                                                                        echo 'value="' . $_SESSION['user']['phone'] . '" readonly';
-                                                                                    } ?> class="mr-2" style="float: right;" placeholder="Enter the recipient phone">
+                                                                <input type="text" <?php 
+                                                                                        echo 'value="' . $user['phone'] . '" readonly';
+                                                                                    ?> class="mr-2" style="float: right;" placeholder="Enter the recipient phone">
                                                             </label>
                                                         </div>
                                                     </div>
@@ -143,30 +154,30 @@ if ($cart_query == NULL) {
                                 <br>
                                 <div class="row-lg-12">
                                     <div class="cart-detail bg-light p-3 p-md-4">
-                                        <h2 class="billing-heading mb-4">Shipping Infomation <span style="float:right;"><button type="submit" name="place_order" class="btn btn-outline-primary">
-                                                    <div id="payment"></div>
-                                                    <script src="https://www.paypal.com/sdk/js?client-id=ATGXcrNc5l8akd8iyRwk-OI4GXTyXAQy_nybdU9fGSfHpFA3crp3AUjbFIHEKYuiGyTkLpczjCgFS2GH"></script>
-                                                    <div id="paypal-button-container"></div>
-                                                    <script>
-                                                        paypal.Buttons({
-                                                            createOrder: function(data, actions) {
-                                                                return actions.order.create({
-                                                                    purchase_units: [{
-                                                                        amount: {
-                                                                            value: "<?php echo number_format($_SESSION['total-checkout'], 2); ?>"
-                                                                        }
-                                                                    }]
-                                                                });
-                                                            },
-                                                            onApprove: function(data, actions) {
-                                                                return actions.order.capture().then(function(details) {
-                                                                    document.getElementById('payment').innerHTML = '<input name="payment" value="Paypal" hidden>'
-                                                                    document.getElementById('theForm').submit();
-                                                                });
-                                                            }
-                                                        }).render('#paypal-button-container');
-                                                    </script>
-                                                </button></span></h2>
+                                        <h2 class="billing-heading mb-4">Shipping Infomation <span style="float:right;">
+                                                <div id="payment"></div>
+                                                <script src="https://www.paypal.com/sdk/js?client-id=ATGXcrNc5l8akd8iyRwk-OI4GXTyXAQy_nybdU9fGSfHpFA3crp3AUjbFIHEKYuiGyTkLpczjCgFS2GH"></script>
+                                                <div id="paypal-button-container"></div>
+                                                <script>
+                                                    paypal.Buttons({
+                                                        createOrder: function(data, actions) {
+                                                            return actions.order.create({
+                                                                purchase_units: [{
+                                                                    amount: {
+                                                                        value: "<?php echo number_format($_SESSION['total-checkout'], 2); ?>"
+                                                                    }
+                                                                }]
+                                                            });
+                                                        },
+                                                        onApprove: function(data, actions) {
+                                                            return actions.order.capture().then(function(details) {
+                                                                document.getElementById('payment').innerHTML = '<input name="payment" value="Paypal" hidden>'
+                                                                document.getElementById('theForm').submit();
+                                                            });
+                                                        }
+                                                    }).render('#paypal-button-container');
+                                                </script>
+                                            </span></h2>
                                     </div>
                                 </div>
                             </div>
@@ -287,7 +298,7 @@ $orderCode = generateOrderCode();
 if (isset($_POST['payment'])) {
     execute("INSERT INTO orders (order_id, user_id, order_date, total_amount, voucher, payment_method, payment_status, status)
      VALUES ('$orderCode', {$_SESSION['user']['user_id']}, NOW(), {$_SESSION['total-checkout']}, '{$_SESSION['coupon']}', 'Paypal', 'Transfer', 'Place Order')");
-    if(isset($_SESSION['coupon'])){
+    if (isset($_SESSION['coupon'])) {
         execute("UPDATE coupon SET quantity = quantity - 1 WHERE coupon_code = '{$_SESSION['coupon']}'");
     }
     foreach ($cart_query as $item) {
