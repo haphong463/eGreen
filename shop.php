@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once ('db/dbhelper.php');
+require_once('db/dbhelper.php');
 $plants = executeResult("SELECT * FROM plants");
 
 ?>
@@ -36,7 +36,7 @@ $plants = executeResult("SELECT * FROM plants");
 
 </head>
 
-<body style="background-color: #000000;">
+<body>
     <div class="all-content">
 
 
@@ -146,6 +146,12 @@ $plants = executeResult("SELECT * FROM plants");
 
                                 foreach ($plants as $plant) {
                                     $image = executeSingleResult("SELECT min(image_id) as image, image_path FROM image WHERE plant_id = {$plant['plant_id']}")['image_path'];
+                                    $__price = ''; // Khởi tạo $__price
+                                    if ($plant['sale'] != NULL && $plant['sale'] > 0) {
+                                        $__price = '<del>' . $plant['price'] . '</del> ' . $plant['sale'] . '';
+                                    }else{
+                                        $__price = $plant['price'];
+                                    }
                                     echo '
                             
                             <div class="col-md-4 py-4 py-md-0">
@@ -163,7 +169,7 @@ $plants = executeResult("SELECT * FROM plants");
                                 </div>
                                 <a href="product-detail.php?pid=' . $plant['plant_id'] . '"><img src="' . $image . '" alt=""></a>
                                     <div class="card-body">
-                                        <h3>con két</h3>
+                                        <h3>' . $plant['name'] . '</h3>
                                         <div class="star">
                                             <i class="bx bxs-star checked"></i>
                                             <i class="bx bxs-star checked"></i>
@@ -172,7 +178,7 @@ $plants = executeResult("SELECT * FROM plants");
                                             <i class="bx bxs-star "></i>
                                         </div>
                                         <p>' . $plant['description'] . '</p>
-                                        <h6>' . $plant['price'] . '<span><button>Add Cart</button></span></h6>
+                                        <h6>' . $__price . '<span><button>Add Cart</button></span></h6>
                                     </div>
                             </div>
                         </div>
