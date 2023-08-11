@@ -1,3 +1,33 @@
+<?php
+session_start();
+require_once('db/dbhelper.php');
+if (isset($_SESSION['user'])) {
+    $user = $_SESSION['user'];
+    $user_id = $user['user_id'];
+}
+if (isset($_POST['addtowishlist'])) {
+    // $petId = $_POST['petId'];
+    $p_id = $_POST['plant_id'];
+    $name = $_POST['name'];
+    $description = $_POST['description'];
+    $price = $_POST['price'];
+
+
+
+
+
+    $sql1 = "INSERT INTO cart (user_id,pet_id,price,quantity) VALUES('$user_id','$p_id','$price',1)";
+    execute($sql1);
+    header("location: cart.php");
+}
+$sql = "SELECT * FROM whistlish where user_id = '$user_id' ";
+$wl = executeResult($sql);
+if (isset($_GET['delete_item'])) {
+    $item_id = $_GET['delete_item'];
+    execute("DELETE FROM whistlish WHERE p_id = $item_id");
+    header('Location: lovelist.php');
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -75,54 +105,80 @@
                         <div class="card shadow-0 border rounded-3">
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
-                                        <div class="bg-image hover-zoom ripple rounded ripple-surface desired_size">
-                                            <img src="img/header/download.jpg" class="w-100" />
-                                            <a href="#!">
-                                                <div class="hover-overlay">
-                                                    <div class="mask" style="background-color: rgba(253, 253, 253, 0.15);"></div>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-lg-6 col-xl-6">
-                                        <h5>Quant trident shirts <span class="text-danger" style="float: right;"><i class='bx bxs-heart' ></i></span></h5>
-                                        <div class="d-flex flex-row">
-                                            <div class="text-danger mb-1 me-2">
-                                                <i class="bx bxs-star"></i>
-                                                <i class="bx bxs-star"></i>
-                                                <i class="bx bxs-star "></i>
-                                                <i class="bx bxs-star "></i>
-                                                <i class="bx bxs-star "></i>
-                                            </div>
-                                            <span>310</span>
-                                        </div>
-                                        
-                                        <p class="text-truncate mb-4 mb-md-0">
-                                            There are many variations of passages of Lorem Ipsum available, but the
-                                            majority have suffered alteration in some form, by injected humour, or
-                                            randomised words which don't look even slightly believable.
-                                        </p>
-                                    </div>
-                                    <div class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start">
-                                        <div class="d-flex flex-row align-items-center mb-1">
-                                            <h4 class="mb-1 me-1">$13.99</h4>
-                                            <span class="text-danger"><s>$20.99</s></span>
-                                        </div>
-                                        <h6 class="text-success">Free shipping</h6>
-                                        <div class="d-flex flex-column mt-4">
-                                            <button class="btn btn-success btn-sm" type="button"><a href="product-detail.php">Details</a></button>
-                                            <button class="btn btn-outline-success btn-sm mt-2" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                                                Add to cart
-                                            </button>
-                                        </div>
-                                    </div>
+                                    <?php
+if ($wl != NULL) {
+                                    foreach ($wl as $w) {
+                                        $image = executeSingleResult("SELECT min(image_id) as image, image_path FROM image WHERE plant_id = {$w['p_id']}")['image_path'];
+                                        $plant = executeSingleResult("SELECT * FROM plants WHERE plant_id = {$w['p_id']}");
+                                        if ($plant['sale'] != null && $plant['sale'] > 0) {
+                                            $price = '$' . '<del style="text-decoration:line-through;">' . $plant['price'] . '</del> $<span style="color:red">' . $plant['sale'] . '</span>';
+                                        } else {
+                                            $price = '$' . $plant['price'];
+                                        }
+                                        echo '
+    
+    <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
+    <div class="bg-image hover-zoom ripple rounded ripple-surface desired_size">
+        <a href="product-detail.php?pid=' . $w['p_id'] . '"><img src="' . $image . '" style="width:200px;" alt=""></a>
+        <a href="#!">
+            <div class="hover-overlay">
+                <div class="mask" style="background-color: rgba(253, 253, 253, 0.15);"></div>
+            </div>
+        </a>
+    </div>
+</div>
+<div class="col-md-6 col-lg-6 col-xl-6">
+    <h5>' . $plant['name'] . '<span class="text-danger" style="float: right;"><i class=\'bx bxs-heart\' ></i></span>
+    <span class=\'product-remove\' style="float: right;"><a href="lovelist.php?delete_item=' . $w['p_id'] . '"><i class=\'bx bx-x-circle\'></i></a></span>
+    </h5>
+   
+
+    <p class="text-truncate mb-4 mb-md-0">
+    ' . $plant['description'] . '
+    </p>
+</div>
+<div class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start">
+    <div class="d-flex flex-row align-items-center mb-1">
+        <h4 class="mb-1 me-1"> ' . $price . '</h4>
+    </div>
+    <h6 class="text-success">Free shipping</h6>
+    <div class="d-flex flex-column mt-4">
+        <button class="btn btn-success btn-sm" type="button"><a href="product-detail.php">Details</a></button>
+        <form action="cart.php" method="post" class="wishlist-form">
+        <button class="btn btn-outline-success btn-sm" type="submit" name="add-cart">
+            Add to cart
+        </button>
+        <input type="hidden" name="pid" value="' . $w['p_id'] . '">
+    <input type="hidden" name="name" value="' . $plant['name'] . '">
+    <input type="hidden" name="description" value="' . $plant['description'] . '">
+    <input type="hidden" name="quantity" value="1">
+        </form>
+    </div>
+</div>
+
+    
+    
+
+
+    ';
+                                    }
+                                } else {
+                                    echo '
+                                    
+                                    <tr>
+                                    <td colspan="5" style="font-size:23px">No products to display!</td>
+                                </tr>
+                                    
+                                    ';
+                                }
+
+                                    ?>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
 
             </div>
         </section>
@@ -138,23 +194,23 @@
 
 
 
-   <!-- Modal -->
-   <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">How many plants you want to buy?</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="number" class="quantity form-control input-number" value="1" min="1" max="100">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-success" style="color: rgb(0, 255, 166);">Add to cart</button>
+        <!-- Modal -->
+        <!-- <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">How many plants you want to buy?</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="number" class="quantity form-control input-number" value="1" min="1" max="100">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-success" style="color: rgb(0, 255, 166);">Add to cart</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </div> -->
 
 
 
