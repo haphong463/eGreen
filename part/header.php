@@ -156,6 +156,9 @@ if($current_page!='/index.php'){
                     <li class="nav-item">
                         <a class="nav-link" href="contact.php">contact</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="aboutUs.php">about</a>
+                    </li>
                     
                 </ul>
             </div>
