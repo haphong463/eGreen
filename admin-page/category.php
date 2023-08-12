@@ -1,5 +1,15 @@
 <?php
+session_start();
 require_once('../db/dbhelper.php');
+//đăng nhập mới vô dc index adminpage!!!!!
+if (isset($_SESSION['admin'])) {
+  $admin = $_SESSION['admin'];
+  $admin_id = $admin['user_id'];
+  $sql = "SELECT * FROM users where user_id = '$admin_id'";
+  $Check_Role = executeSingleResult($sql);
+} else {
+  header("location:../login.php");
+}
 $categories_list = executeResult("SELECT * FROM categories");
 ?>
 <!DOCTYPE html>
@@ -44,26 +54,30 @@ $categories_list = executeResult("SELECT * FROM categories");
             <th scope="col">Image</th>
             <th scope="col">Name</th>
             <th scope="col">Description</th>
+            <?php if ($Check_Role['role'] == 1) { ?>
             <th scope="col">Action</th>
+            <?php } ?>
           </tr>
         </thead>
 
         <tbody>
           <?php
           foreach ($categories_list as $category) {
+
             echo '
               
               <tr>
               <td><img width="100px" height="100px" src=../' . $category['image'] . '></td>
             <td>' . $category['name'] . '</td>
-            <td>' . $category['description'] . '</td>
-            <td>
-            <a href="category-edit.php?id=' . $category['category_id'] . '"><button type="button" class="btn btn-primary">Edit</button></a>
+            <td>' . $category['description'] . '</td> ';
+            if ($Check_Role['role'] == 1) {
+              echo ' <td>  <a href="category-edit.php?id=' . $category['category_id'] . '"><button type="button" class="btn btn-primary">Edit</button></a>
               <a href="process/delete.php?delete_cat=' . $category['category_id'] . '"><button type="button" class="btn btn-danger">Delete</button></a>
             </td>
           </tr>
 
               ';
+            }
           }
           ?>
         </tbody>
