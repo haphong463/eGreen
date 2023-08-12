@@ -1,15 +1,5 @@
 <?php
-session_start();
 require_once('../db/dbhelper.php');
-//đăng nhập mới vô dc index adminpage!!!!!
-if (isset($_SESSION['admin'])) {
-  $admin = $_SESSION['admin'];
-  $admin_id = $admin['user_id'];
-  $sql = "SELECT * FROM users where user_id = '$admin_id'";
-  $Check_Role = executeSingleResult($sql);
-} else {
-  header("location:../login.php");
-}
 $categories_list = executeResult("SELECT * FROM categories");
 ?>
 <!DOCTYPE html>
@@ -21,11 +11,14 @@ $categories_list = executeResult("SELECT * FROM categories");
   <link rel="stylesheet" href="admin.css">
   <!-- iconscount link css -->
   <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <title>Admin Dashboard Panel</title>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </head>
 
 <body>
@@ -35,49 +28,50 @@ $categories_list = executeResult("SELECT * FROM categories");
 
   <section class="dashboard">
 
-    <?php
-    include('part/header.php');
-    ?>
+  <div class="top">
+            <i class="uil uil-bars slidebar-toggle"></i>
+
+            <div class="search-box">
+                <i class="uil uil-search"></i>
+                <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for words ..">
+            </div>
+
+            <img src="image/logo.png" alt="">
+        </div>
 
 
     <table class="table">
 
       <br><br><br>
 
-      <div class="container-fluid">
+      <div class="container">
 
         <h1>Categories</h1>
-        <h2 style="float: right;"><button type="button" class="btn btn-outline-info"><a href="category-add.php">Add</a></button></h2>
+        <h2 style="float: right;"><button type="button" class="btn btn-outline-info">add</button></h2>
 
         <thead>
           <tr>
-            <th scope="col">Image</th>
             <th scope="col">Name</th>
             <th scope="col">Description</th>
-            <?php if ($Check_Role['role'] == 1) { ?>
             <th scope="col">Action</th>
-            <?php } ?>
           </tr>
         </thead>
 
-        <tbody>
+        <tbody id="myTable">
           <?php
           foreach ($categories_list as $category) {
-
             echo '
               
               <tr>
-              <td><img width="100px" height="100px" src=../' . $category['image'] . '></td>
             <td>' . $category['name'] . '</td>
-            <td>' . $category['description'] . '</td> ';
-            if ($Check_Role['role'] == 1) {
-              echo ' <td>  <a href="category-edit.php?id=' . $category['category_id'] . '"><button type="button" class="btn btn-primary">Edit</button></a>
-              <a href="process/delete.php?delete_cat=' . $category['category_id'] . '"><button type="button" class="btn btn-danger">Delete</button></a>
+            <td>' . $category['description'] . '</td>
+            <td>
+              <button type="button" class="btn btn-outline-primary">delete</button>
+              <button type="button" class="btn btn-outline-secondary">edit</button>
             </td>
           </tr>
 
               ';
-            }
           }
           ?>
         </tbody>
@@ -86,6 +80,17 @@ $categories_list = executeResult("SELECT * FROM categories");
   </section>
 
   <script src="script.js"></script>
+  
+  <script>
+        $(document).ready(function() {
+            $("#myInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#myTable tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

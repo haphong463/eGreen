@@ -1,7 +1,7 @@
 <?php
 require_once('../db/dbhelper.php');
 
-$perPage = 7;
+$perPage = 6;
 
 // Trang hiện tại, mặc định là 1
 $page = isset($_GET['page']) ? $_GET['page'] : 1;
@@ -53,8 +53,7 @@ $blog = executeResult($sql);
 
             <br><br><br>
             <h1>Blog</h1>
-
-            <div class="container-fluid">
+            <div class="container">
 
                 <a href="b-category.php">
                     <i class="uil uil-user"></i>
@@ -70,6 +69,7 @@ $blog = executeResult($sql);
                         <a style="text-decoration: none;" href="blog-add.php">Add</a>
                     </button>
                 </h2>
+
                 <thead>
                     <tr>
                         <th scope="col">Title</th>
@@ -84,14 +84,14 @@ $blog = executeResult($sql);
                     <?php
                     if ($blog != null) {
                         foreach ($blog as $b) {
-                            $cat_name = executeSingleResult("SELECT * FROM blog_category WHERE blog_category_id = {$b['blog_category_id']}")['name'];
+                            $type = executeSingleResult("SELECT * FROM blog_category WHERE blog_category_id = {$b['blog_category_id']}")['name'];
                     ?>
                             </tr>
                             <td><?php $title = $b['title'];
                                 echo strlen($title) > 30 ? substr($title, 0, 30) . "..." : $title; ?></td>
                             <td><?php $content = $b['content'];
                                 echo strlen($content) > 30 ? substr($content, 0, 30) . "..." : $content; ?></td>
-                            <td><?php echo $cat_name ?></td>
+                            <td><?php echo $type ?></td>
                             <td><?php echo $b['created_at'] ?></td>
                             <td>
                                 <a href="process/blog-delete.php?blog_id=<?php echo $b['blog_id']; ?>">
