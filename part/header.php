@@ -1,6 +1,6 @@
 <?php
 require_once('db/dbhelper.php');
-// $user['username'] ='';
+
 
 if(isset($_SESSION['user'])){
 
@@ -10,8 +10,8 @@ if(isset($_SESSION['user'])){
 elseif (isset($_SESSION['user_token'])) {
     $user_token = $_SESSION['user_token'];
     $user = executeSingleResult("SELECT * FROM users WHERE token = '$user_token'");
-    // var_dump($user);
-    // die();
+    $user_id = $user['user_id'];
+
 }
 
 
@@ -19,11 +19,7 @@ elseif (isset($_SESSION['user_token'])) {
 $current_page = $_SERVER['PHP_SELF'];
 
 if ($current_page != '/user-login.php') {
-
-
     if (isset($_SESSION['user'])) {
-
-        $user = $_SESSION['user'];
         $user_id = $user['user_id'];
 
 
@@ -31,23 +27,23 @@ if ($current_page != '/user-login.php') {
         $check = executeSingleResult($sql);
         
         if ($check['token'] != '') {
-           
-            if ($_SESSION['tokens'] != $check['token']) {
+            if ($_SESSION['token'] != $check['token']) {
               
                 // Xóa phiên đăng nhập trước trên các thiết bị khác
-                unset($_SESSION['admin']); // Xóa hết các biến session
-                unset($_SESSION['tokens']); // Xóa hết các biến session
+                unset($_SESSION['user']); // Xóa hết các biến session
+                unset($_SESSION['token']); // Xóa hết các biến session
                 echo '<script>
-                alert("Login detected at a different location! Please log in again.")
-                window.location.href = "user-login.php";
+                alert("Warning: Device Detected Logging In from Unrecognized Location !!!!")
+                window.location.href = "login.php";
                 </script>';
-            }else {
-
+                $sql = "UPDATE users
+                SET token = '', token_create_at ='' WHERE user_id = '$user_id'  " ;
+                execute($sql);
             }
             if($check['status']==1){
 
-                unset($_SESSION['admin']); // Xóa hết các biến session
-                unset($_SESSION['tokens']); // Xóa hết các biến session
+                unset($_SESSION['user']); // Xóa hết các biến session
+                unset($_SESSION['token']); // Xóa hết các biến session
                 
                 echo '<script>
                 alert("You have been banned from accessing the website by the administrator.")
@@ -65,13 +61,15 @@ if ($current_page != '/user-login.php') {
                        $user = executeSingleResult("SELECT * FROM users WHERE token = '$user_token'");
                        $user_id = $user['user_id'];
                    if($user['status'] == 1){
-                       unset($_SESSION['user_gmail']);
+                       unset($_SESSION['user_token']);
+               
                        echo '<script>
                        alert("Log out !!!!")
                        window.location.href = "user-login.php";
                        </script>';
+
                        $sql = "UPDATE users
-                       SET token_create_at ='' WHERE user_id = '$user_id'  " ;
+                       SET token_create_at = '' WHERE user_id = '$user_id'  " ;
                        execute($sql);
                    }
        }
@@ -81,6 +79,16 @@ if($current_page!='/index.php'){
         $user = $_SESSION['user'];
         $user_id = $user['user_id'];
        $sql = "UPDATE users SET token_create_at= now() WHERE user_id = '$user_id'" ;
+               execute($sql);
+    }elseif(isset($_SESSION['user_token'])){
+        $token = $_SESSION['user_token'];
+        $sql = "SELECT * FROM users WHERE token = '$token'";
+        $user = executeSingleResult($sql);
+        $user_id = $user['user_id'];
+
+        $sql = "SELECT * FROM users WHERE user_id = '$user_id'";
+        $check = executeSingleResult($sql);
+       $sql = "UPDATE users SET token_create_at = NOW() WHERE user_id = '$user_id'" ;
                execute($sql);
     }
   
@@ -155,9 +163,6 @@ if($current_page!='/index.php'){
                 
                     <li class="nav-item">
                         <a class="nav-link" href="contact.php">contact</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="aboutUs.php">about</a>
                     </li>
                     
                 </ul>
