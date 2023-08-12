@@ -1,15 +1,13 @@
 <?php
 
 //submit_rating.php
-
+require_once('db/dbhelper.php');
 $connect = new PDO("mysql:host=localhost;dbname=plant", "root", "");
 if (isset($_POST["pid"])) {
 	$pid = $_POST["pid"];
 }
-
 //submit
 if (isset($_POST["rating_data"])) {
-
 	if (isset($_POST['g-recaptcha-response']) && !empty($_POST['g-recaptcha-response'])) {
 		// Google secret API
 		$secretAPIkey = '6LfOCW0mAAAAALiI_52jZV8HpuUfaQragoglsPmB';

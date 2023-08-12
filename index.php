@@ -123,14 +123,7 @@ $plants = executeResult("SELECT * FROM plants LIMIT 6");
                                 <a href="product-detail.php?pid=' . $plant['plant_id'] . '"><img src="' . $image . '" alt=""></a>
                                     <div class="card-body">
                                         <h3>' . $plant['name'] . ' </h3>
-                                        <div class="star">
-                                            <i class="bx bxs-star checked"></i>
-                                            <i class="bx bxs-star checked"></i>
-                                            <i class="bx bxs-star "></i>
-                                            <i class="bx bxs-star "></i>
-                                            <i class="bx bxs-star "></i>
-                                        </div>
-                                        <h6>' . $plant['price'] . '<span><button>Add Cart</button></span></h6>
+                                        <h6>' . $plant['price'] . '</h6>
                                     </div>
                             </div>
                         </div>  

@@ -7,8 +7,25 @@ if (!isset($_GET['pid']) || !is_numeric($_GET['pid'])) {
     exit(); //
 }
 
+
+if (isset($_SESSION['user'])) {
+
+    $user = $_SESSION['user'];
+    $user_id = $user['user_id'];
+    $info = executeSingleResult("SELECT * FROM users WHERE user_id = $user_id");
+} elseif (isset($_SESSION['user_token'])) {
+    $user_token = $_SESSION['user_token'];
+    $info = executeSingleResult("SELECT * FROM users WHERE token = '$user_token'");
+}
 $pid = $_GET['pid'];
 $product_result = executeSingleResult("SELECT * FROM plants WHERE plant_id = $pid");
+$price = $product_result['price'];
+$sale = $product_result['sale'];
+if ($sale != null && $sale > 0) {
+    $__price = '<del style="color:red">$' . $price . '</del> $' . $sale . '';
+} else {
+    $__price = $price;
+}
 $cate = executeSingleResult("SELECT * FROM categories WHERE  category_id = {$product_result['category_id']}")['name'];
 if (!$product_result) {
     header("Location: index.php");
@@ -163,7 +180,7 @@ $forbidden_words = executeResult("SELECT * FROM forbidden_words");
 
                     </div>
                     <div class="col-lg-6 product-details pl-md-5 ftco-animate">
-                        <h3 style="font-size: 100px;"><?= $product_result['name'] ?></h3>
+                        <h3 style="font-size: 50px; text-align:left"><?= $product_result['name'] ?></h3>
                         <div class="rating">
                             <b><span id="average_rating">0.0</span> / 5</b>
                             <div class="mb-3">
@@ -177,7 +194,7 @@ $forbidden_words = executeResult("SELECT * FROM forbidden_words");
                             <p class="mr-2" style="color: #000;">500 <span style="color: #bbb;">Sold</span></p>
                             </p>
                         </div>
-                        <p class="price"><span>$<td><?= $product_result['price'] ?></td></span> <span style="float: right;"><?= $cate ?></span></p>
+                        <p class="price"><span><td><?= $__price ?></td></span> <span style="float: right;"><?= $cate ?></span></p>
                         <p>
                             <?= $product_result['description']; ?>
                         </p>
@@ -349,11 +366,6 @@ $forbidden_words = executeResult("SELECT * FROM forbidden_words");
                     <!-- The Modal -->
                     <div class="modal" id="myModal">
                         <div class="modal-dialog">
-                            <?php
-                            if (isset($c_id)) {
-                                $info = executeSingleResult("SELECT * FROM users WHERE user_id = $c_id");
-                            }
-                            ?>
                             <div class="modal-content">
 
                                 <!-- Modal Header -->
@@ -375,13 +387,13 @@ $forbidden_words = executeResult("SELECT * FROM forbidden_words");
                                     </h4>
 
                                     <input type="hidden" name="c_id" id="c_id" value="<?php if (isset($info)) {
-                                                                                            echo $info['id'];
+                                                                                            echo $info['user_id'];
                                                                                         } ?>">
 
                                     <div class="input-group mb-3">
                                         <span class="input-group-text" id="basic-addon1">@</span>
-                                        <input type="text" name="user_name" id="user_name" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" <?php if (isset($_SESSION['user'])) {
-                                                                                                                                                                                                    echo 'value="' . $_SESSION['user']['fullname'] . '" readonly';
+                                        <input type="text" name="user_name" id="user_name" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" <?php if ($info) {
+                                                                                                                                                                                                    echo 'value="' . $info['fullname'] . '" readonly';
                                                                                                                                                                                                 } ?> />
                                     </div>
 
@@ -396,9 +408,26 @@ $forbidden_words = executeResult("SELECT * FROM forbidden_words");
                                     <div class="g-recaptcha" data-sitekey="6LfOCW0mAAAAAEFxgE1iG_mUt1rVdMQh5C9qP0DX"></div><br>
 
                                     <div class="form-group text-center mt-4">
-                                        <button type="button" class="btn review-btn" id="save_review">Submit Review</button>
-                                        <button type="button" class="btn review-btn" onclick="closeForm()">Cancel</button>
+                                        <?php
+                                        $check = executeSingleResult("SELECT * FROM plants INNER JOIN order_details ON order_details.plant_id = plants.plant_id 
+                                        INNER JOIN orders ON orders.order_id = order_details.order_id WHERE orders.user_id = {$info['user_id']} and order_details.plant_id = $pid   ");
+                                        if ($check == null) {
+                                            echo '
+                                                    <button type="button" class="btn review-btn" id="save_review" disabled>Submit Review</button>
 
+                                                    
+
+                                                    ';
+                                        } else {
+                                            echo '
+                                                
+                                                <button type="button" class="btn review-btn" id="save_review">Submit Review</button>
+
+                                                
+                                                ';
+                                        }
+                                        ?>
+                                        <button type="button" class="btn review-btn" onclick="closeForm()">Cancel</button>
                                     </div>
 
                                 </div>

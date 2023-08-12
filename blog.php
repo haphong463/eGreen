@@ -11,11 +11,31 @@ if (!empty($searchKeyword)) {
     OR content LIKE '%$searchKeyword%' ORDER BY created_at DESC";
 } elseif (!empty($tags)) {
     $sql = "SELECT * FROM blog 
-    WHERE blog_category_id LIKE '%$tags%' ORDER BY created_at DESC";
+    WHERE blog_category_id = $tags ORDER BY created_at DESC";
 } else {
     $sql = "SELECT * FROM blog ORDER BY created_at DESC";
 }
 // $sql = "SELECT * FROM blog ORDER BY created_at DESC";
+
+if (isset($_GET['sort'])) {
+    $sort = $_GET['sort'];
+    switch ($sort) {
+        case 'date_asc':
+            $sql = "SELECT * FROM blog ORDER BY created_at ASC";
+            break;
+        case 'date_desc':
+            $sql = "SELECT * FROM blog ORDER BY created_at DESC";
+            break;
+        case 'most_comment':
+            $sql = "SELECT p.*, COUNT(r.blog_id) AS review_count
+            FROM blog AS p
+            LEFT JOIN comments AS r ON p.blog_id = r.blog_id
+            GROUP BY p.blog_id HAVING review_count > 0
+            ORDER BY review_count DESC
+            ";
+            break;
+    }
+}
 
 $blog_result =  executeResult($sql);
 
@@ -248,7 +268,13 @@ $post_resutl = executeResult($query);
 
 
 
-
+    <script>
+        // Lắng nghe sự kiện thay đổi lựa chọn trong dropdown
+        document.querySelector('select[name="sort"]').addEventListener('change', function() {
+            // Gọi hàm submit() của form khi có sự thay đổi
+            document.getElementById('sortForm').submit();
+        });
+    </script>
 
 
 

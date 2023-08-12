@@ -5,12 +5,13 @@
     // Trang hiện tại, mặc định là 1
     $sort = isset($_GET['sort']) ? $_GET['sort'] : '';
 
+
     $sql_transaction = "SELECT * FROM plants";
 
     $minPrice = isset($_GET['min']) ? $_GET['min'] : null;
     $maxPrice = isset($_GET['max']) ? $_GET['max'] : null;
     $cate = isset($_GET['cate_id']) ? $_GET['cate_id'] : null;
-
+    $most_view = isset($_GET['most_view']) ? $_GET['most_view'] : null;
     if ($cate) {
         $sql_transaction .= " WHERE category_id = $cate";
         if (($minPrice) && ($maxPrice)) {
@@ -18,33 +19,16 @@
         }
     }
 
+    if ($most_view) {
+        $sql_transaction = "
+        SELECT p.*, COUNT(r.review_id) AS review_count
+        FROM plants AS p
+        LEFT JOIN review_table AS r ON p.plant_id = r.plant_id
+        GROUP BY p.plant_id HAVING review_count > 0
+        ORDER BY review_count DESC
+        ";
+    }
 
-
-
-
-
-    // switch ($sort) {
-    //     case 'price_asc':
-    //         $sql_transaction .= " ORDER BY CASE WHEN sale > 0 THEN sale ELSE price END ASC";
-    //         break;
-    //     case 'price_desc':
-    //         $sql_transaction .= " ORDER BY CASE WHEN sale > 0 THEN sale ELSE price END DESC";
-    //         break;
-    //     case 'name_asc':
-    //         $sql_transaction .= " ORDER BY name ASC";
-    //         break;
-    //     case 'name_desc':
-    //         $sql_transaction .= " ORDER BY name DESC";
-    //         break;
-    //         // Thêm các trường hợp sắp xếp khác ở đây (nếu cần)
-    //     default:
-    //         // Sắp xếp mặc định nếu không có yêu cầu
-    //         $sql_transaction .= " ORDER BY plant_id DESC";
-    // }
-
-    // Thêm các điều kiện lọc khác vào câu truy vấn tương tự
-
-    // Tính chỉ mục bắt đầu của dữ liệu trên trang hiện tại
     $plants = executeResult($sql_transaction);
     $totalProducts = count($plants);
     $limit = 6;
@@ -157,29 +141,7 @@
                             <form action="" method="get" class="search-form">
 
                                 <h3 class="mb-4 billing-heading" style="padding-top: 20%; color: #333;font-size:40px;text-align:center ;">Search</h3>
-                                <!-- <div class="row align-items-end">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <div class="col-3">
-                                                    <label for="firstname" style="color: rgb(156, 255, 212);">Plant</label>
-                                                </div>
-                                                <div class="col-9">
-                                                    <input type="text" name="keyword" class="form-control" placeholder="search name here">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> -->
 
-
-
-
-                                <!-- <div class="col-md-12"><div class="form-group">
-                                            <label for="firstname">ℕ𝕦𝕞𝕓𝕖𝕣</label>
-                                            <input type="number" name="searchAge" class="form-control" placeholder="search from here on up">
-                                        </div>
-                                    </div> -->
 
                         </div>
                         <br><br>
@@ -210,22 +172,15 @@
                         <input type="hidden" name="max" id="maxPrice" value="<?php echo isset($_GET['max']) ? $_GET['max'] : ''; ?>">
                         <div id="slider" class="mt-5 mb-5"></div>
                         <div class="text-center mb-3">
-                            <span id="minprice">0</span> - <span id="maxprice"></span>
+                            <span id="minprice"></span> - <span id="maxprice"></span>
                         </div>
 
-                        <button type="submit" class="btn btn-outline-success" style="width:100%;font-size:13px;color: rgb(156, 255, 212);">S E A R C H</button>
+                        <button type="submit" class="btn btn-outline-success" style="width:100%;font-size:13px;">Search</button>
 
                         </form>
 
+                        <button id="mostViewButton" class="btn btn-primary mt-3 mb-3">Most Reviewed Products</button>
 
-                        <form id="sortForm" action="" method="get">
-                            <select name="sort" class="form-control">
-                                <option value="price_asc">Price Low to High</option>
-                                <option value="price_desc">Price High to Low</option>
-                                <option value="name_asc">Name A-Z</option>
-                                <option value="name_desc">Name Z-A</option>
-                            </select>
-                        </form>
 
                     </div>
                     <div class="col-9">
@@ -322,11 +277,11 @@
 
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.js"></script>
+
         <script>
-            // Lắng nghe sự kiện thay đổi lựa chọn trong dropdown
-            document.querySelector('select[name="sort"]').addEventListener('change', function() {
-                // Gọi hàm submit() của form khi có sự thay đổi
-                document.getElementById('sortForm').submit();
+            document.getElementById('mostViewButton').addEventListener('click', function() {
+                // Redirect to the same page with the 'most_view' parameter set to 'true'
+                window.location.href = '?most_view=true';
             });
         </script>
 
@@ -337,8 +292,9 @@
             var maxPriceInput = document.getElementById('maxPrice');
             var minPriceDisplay = document.getElementById('minprice');
             var maxPriceDisplay = document.getElementById('maxprice');
-            var minPriceValue = parseInt(minPriceInput.value); // ParseInt để chuyển đổi chuỗi thành số nguyên
-            var maxPriceValue = parseInt(maxPriceInput.value); // ParseInt để chuyển đổi chuỗi thành số nguyên
+            var minPriceValue = parseFloat(minPriceInput.value); // Sử dụng parseFloat thay vì parseInt
+            var maxPriceValue = parseFloat(maxPriceInput.value); // Sử dụng parseFloat thay vì parseInt
+            
             noUiSlider.create(slider, {
                 start: [<?= isset($_GET['min']) ? $_GET['min'] : "minPrice" ?>, <?= isset($_GET['max']) ? $_GET['max'] : "maxPrice" ?>],
                 connect: true,
@@ -348,14 +304,14 @@
                 }
             });
             // Cập nhật giá trị hiển thị ban đầu
-            minPriceDisplay.innerText = "$" + minPriceValue;
-            maxPriceDisplay.innerText = "$" + maxPriceValue;
+            minPriceDisplay.innerText = "$" + minPriceValue.toFixed(2); // Sử dụng toFixed(2) để hiển thị 2 chữ số sau dấu phẩy
+            maxPriceDisplay.innerText = "$" + maxPriceValue.toFixed(2); // Sử dụng toFixed(2) để hiển thị 2 chữ số sau dấu phẩy
 
             // Xử lý sự kiện khi giá trị slider thay đổi
             slider.noUiSlider.on('change', function(values, handle) {
                 // Lấy giá trị từ slider
-                var min = parseInt(values[0]);
-                var max = parseInt(values[1]);
+                var min = parseFloat(values[0]); // Sử dụng parseFloat thay vì parseInt
+                var max = parseFloat(values[1]); // Sử dụng parseFloat thay vì parseInt
 
                 // Cập nhật giá trị trong input hidden
                 minPriceInput.value = min;
@@ -364,10 +320,11 @@
                 maxPriceValue = max;
 
                 // Cập nhật giá trị hiển thị
-                minPriceDisplay.innerText = "$" + minPriceValue;
-                maxPriceDisplay.innerText = "$" + maxPriceValue;
+                minPriceDisplay.innerText = "$" + minPriceValue.toFixed(2); // Sử dụng toFixed(2) để hiển thị 2 chữ số sau dấu phẩy
+                maxPriceDisplay.innerText = "$" + maxPriceValue.toFixed(2); // Sử dụng toFixed(2) để hiển thị 2 chữ số sau dấu phẩy
             });
         </script>
+
 
         <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
         <script>

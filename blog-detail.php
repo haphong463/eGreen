@@ -314,10 +314,10 @@ $cmt_result = executeResult($sql2);
 
                         <div class="form-group">
                             <input type="hidden" class="form-control" name="blog-id" value="<?php echo $bid ?>" />
-                            <input type="hidden" name="email-user" value="<?php echo $info['user_id'] ?>">
+                            <input type="hidden" name="email-user" value="<?php echo isset($info) ? $info['user_id'] : 0 ?>">
                         </div>
                         <div class="form-group">
-                            <input type="hidden" class="form-control" name="comment-name" value="<?php echo isset($info) ? $info['fullname'] : NULL ?>">
+                            <input type="hidden" class="form-control" name="comment-name" value="<?php echo isset($info) ? $info['fullname'] : "Anonymous" ?>">
                         </div>
 
                         <div>
@@ -326,13 +326,9 @@ $cmt_result = executeResult($sql2);
                         </div>
 
                         <div style="text-align: left;">
-                            <?php
-                            if (isset($info)) {
-                                echo '<button class="button-81" role="button" type="submit">Send</button>';
-                            } else {
-                                echo '<a href="user-login.php"><button class="button-81" role="button" type="button">Send</button></a>';
-                            }
-                            ?>
+
+                            <button class="button-81" role="button" type="submit">Send</button>
+
                         </div>
                     </form>
 
