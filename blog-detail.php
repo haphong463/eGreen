@@ -12,9 +12,14 @@ $title = $blog_result['title'];
 $content = $blog_result['content'];
 $img = $blog_result['img'];
 $date = 'On ' . date('F d, Y', strtotime($blog_result['created_at'])); // Convert the date format
-
 if (isset($_SESSION['user'])) {
-    $info = executeSingleResult("SELECT * FROM users WHERE user_id = {$_SESSION['user']['user_id']}");
+    $user_id = $_SESSION['user']['user_id'];
+    $info = executeSingleResult("SELECT * FROM users WHERE user_id = $user_id and type = 'user");
+} elseif (isset($_SESSION['user_token'])) {
+    $user_token = $_SESSION['user_token'];
+    $user = executeSingleResult("SELECT * FROM users WHERE token = '$user_token'");
+    $user_id = $user['user_id'];
+    $info = executeSingleResult("SELECT * FROM users WHERE user_id = $user_id and type = 'google'");
 }
 
 
@@ -322,7 +327,7 @@ $cmt_result = executeResult($sql2);
 
                         <div style="text-align: left;">
                             <?php
-                            if (isset($_SESSION['user']) || isset($_SESSION['user_token'])) {
+                            if (isset($info)) {
                                 echo '<button class="button-81" role="button" type="submit">Send</button>';
                             } else {
                                 echo '<a href="user-login.php"><button class="button-81" role="button" type="button">Send</button></a>';
@@ -350,7 +355,6 @@ $cmt_result = executeResult($sql2);
                                 <?php if (count($result) > 0) { ?>
                                     <ul class="comment-tree list-unstyled ">
                                         <?php
-
                                         $forbiddenWords = executeResult("SELECT list FROM forbidden_words");
 
                                         foreach ($result as $row) {
@@ -424,7 +428,7 @@ $cmt_result = executeResult($sql2);
                     }
 
                     // Hiển thị comment
-                    displayComments();  
+                    displayComments();
                     ?>
 
                 </div>

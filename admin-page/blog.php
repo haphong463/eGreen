@@ -54,10 +54,22 @@ $blog = executeResult($sql);
             <br><br><br>
             <h1>Blog</h1>
 
-            <div class="container">
+            <div class="container-fluid">
 
-                <h2 style="float: right;"><button type="button" class="btn btn-outline-info"><a style="text-decoration: none;" href="blog-add.php">Add</a></button></h2>
-
+                <a href="b-category.php">
+                    <i class="uil uil-user"></i>
+                    <span class="link-name">Blog category</span>
+                </a>
+                &emsp;
+                <a href="comment.php">
+                    <i class="uil uil-user"></i>
+                    <span class="link-name">Blog comment</span>
+                </a>
+                <h2 style="float: right;">
+                    <button type="button" class="btn btn-outline-info">
+                        <a style="text-decoration: none;" href="blog-add.php">Add</a>
+                    </button>
+                </h2>
                 <thead>
                     <tr>
                         <th scope="col">Title</th>

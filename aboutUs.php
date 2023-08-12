@@ -1,10 +1,10 @@
 <?php
 require_once('db/dbhelper.php');
 $sql = 'select * from about where id=1';
-$about1 = executeResult($sql);
+$about1 = executeSingleResult($sql);
 
 $sql = 'select * from about where id=2';
-$about2 = executeResult($sql);
+$about2 = executeSingleResult($sql);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -152,7 +152,7 @@ $about2 = executeResult($sql);
     </div>
     <!-- home Section End-->
     <!-- <p style="font-size:50px;text-align: center;transition:0.5s;width:100%;height: 100%;">▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀</p> -->
-<br><br><br><br>
+    <br><br><br><br>
     <!-- <p style="font-size: 100px; text-align: center;"><strong>#luxury</strong></p>
     <br><br>
     <a href="#">
@@ -169,27 +169,21 @@ $about2 = executeResult($sql);
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="card">
-                            <img src="img/MOUNTAINS.jpg" alt="Jane" style="width:100%;height:380px;">
+                            <img src="<?= $about1['image'] ?>" alt="Jane" style="width:100%;height:380px;">
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="container">
-                        <?php
-                    if ($about1 != null) {
-                        foreach ($about1 as $row1) {
-                    ?>
-                            <h1><?php echo $row1['content']; ?></h1>
-                            <p class="title"><b><?php echo $row1['phone']; ?></b></p>
-                            <p><?php echo $row1['discription']; ?></p>
-                            <p><?php echo $row1['email']; ?></p>
                             <?php
-                        }
-                    } else {
-                        ?>
-                        <p style="color:red;">no records found</p>
-                    <?php
-                    }
-                    ?>
+                            if ($about1 != null) {
+                            ?>
+                                <h1><?php echo $about1['content']; ?></h1>
+                                <p class="title"><b><?php echo $about1['phone']; ?></b></p>
+                                <p><?php echo $about1['discription']; ?></p>
+                                <p><?php echo $about1['email']; ?></p>
+                            <?php
+                            }
+                            ?>
                         </div>
                     </div>
                 </div>
@@ -199,28 +193,22 @@ $about2 = executeResult($sql);
             <div class="col-lg-12">
                 <div class="row">
                     <div class="col-lg-6">
-                    <div class="container">
-                    <?php
-                    if ($about2 != null) {
-                        foreach ($about2 as $row2) {
-                    ?>
-                            <h1><?php echo $row2['content']; ?></h1>
-                            <p class="title"><b><?php echo $row2['phone']; ?></b></p>
-                            <p><?php echo $row2['discription']; ?></p>
-                            <p><?php echo $row2['email']; ?></p>
+                        <div class="container">
                             <?php
-                        }
-                    } else {
-                        ?>
-                        <p style="color:red;">no records found</p>
-                    <?php
-                    }
-                    ?>
+                            if ($about2 != null) {
+                            ?>
+                                <h1><?php echo $about2['content']; ?></h1>
+                                <p class="title"><b><?php echo $about2['phone']; ?></b></p>
+                                <p><?php echo $about2['discription']; ?></p>
+                                <p><?php echo $about2['email']; ?></p>
+                            <?php
+                            }
+                            ?>
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="card">
-                            <img src="img/wallpaper.jpg" alt="Jane" style="width:100%;height:380px;">
+                            <img src="<?= $about2['image'] ?>" alt="Jane" style="width:100%;height:380px;">
                         </div>
                     </div>
                 </div>

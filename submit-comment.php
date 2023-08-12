@@ -8,7 +8,7 @@ $commentName = $_POST['comment-name'];
 $commentContent = trim($_POST['comment-content']);
 $parentId = isset($_POST['parent_id']) ? $_POST['parent_id'] : 0;
 $c_id = $_POST['email-user'];
-
+echo $blogId;
 // Thêm comment vào cơ sở dữ liệu
 // Validate input
 if (!empty($commentName) && !empty($commentContent)) {

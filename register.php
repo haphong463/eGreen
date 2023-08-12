@@ -107,19 +107,7 @@ if (isset($_POST['create'])) {
 
 
 
-    // if (empty($birth)) {
-    //     $err['birth'] = 'birth must be not empty';
-    // } else {
-    //     $birthday_date = new DateTime($birth);
 
-    //     $current_date = new DateTime();
-    //     $formatted_birthday = $birthday_date->format('m-d-Y');
-    //     $minimum_age_date = $current_date->sub(new DateInterval('P16Y'));
-
-    //     if ($birthday_date > $minimum_age_date) {
-    //         $err['birth'] = 'You must be at least 16 years old to proceed!';
-    //     }
-    // }
 
 
 
@@ -128,7 +116,7 @@ if (isset($_POST['create'])) {
 
 
 
-        $sql = "INSERT INTO users(username,fullname,phone,address,email,status,password,Type,role) VALUES ('$username','$fullname','$phone','$address','$email',2,'$pass','user',3)";
+        $sql = "INSERT INTO users(username,fullname,phone,email,status,password,Type,role) VALUES ('$username','$fullname','$phone','$email',2,'$pass','user',3)";
         execute($sql);
         $_SESSION['email'] = $email;
 
@@ -157,11 +145,10 @@ if (isset($_POST['create'])) {
             echo '<p>' . $error . '<p/>';
         } else {
             echo "<script>alert('Your mail has been sent,please check your mail to verify');
-            window.location.href = 'user-login.php';
+                
                 </script>";
         }
     }
- 
 }
 
 ?>

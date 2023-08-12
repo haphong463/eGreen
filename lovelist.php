@@ -2,10 +2,22 @@
 session_start();
 require_once('db/dbhelper.php');
 if (isset($_SESSION['user'])) {
-    $user = $_SESSION['user'];
+    $user_id = $_SESSION['user']['user_id'];
+} elseif (isset($_SESSION['user_token'])) {
+    $user_token = $_SESSION['user_token'];
+    $user = executeSingleResult("SELECT * FROM users WHERE token = '$user_token'");
     $user_id = $user['user_id'];
+} else {
+    header('Location: user-login.php');
 }
+
 if (isset($_POST['addtowishlist'])) {
+    $p_id = $_POST['plant_id'];
+    $sql = "INSERT INTO whistlish (p_id,user_id) VALUES ('$p_id','$user_id')";
+    execute($sql);
+}
+
+if (isset($_POST['add-to-cart'])) {
     // $petId = $_POST['petId'];
     $p_id = $_POST['plant_id'];
     $name = $_POST['name'];
@@ -100,22 +112,22 @@ if (isset($_GET['delete_item'])) {
         <section>
             <div class="container py-5">
 
-                <div class="row justify-content-center mb-3">
+                <div class="row mb-3">
                     <div class="col-md-12 col-xl-10">
                         <div class="card shadow-0 border rounded-3">
                             <div class="card-body">
                                 <div class="row">
                                     <?php
-if ($wl != NULL) {
-                                    foreach ($wl as $w) {
-                                        $image = executeSingleResult("SELECT min(image_id) as image, image_path FROM image WHERE plant_id = {$w['p_id']}")['image_path'];
-                                        $plant = executeSingleResult("SELECT * FROM plants WHERE plant_id = {$w['p_id']}");
-                                        if ($plant['sale'] != null && $plant['sale'] > 0) {
-                                            $price = '$' . '<del style="text-decoration:line-through;">' . $plant['price'] . '</del> $<span style="color:red">' . $plant['sale'] . '</span>';
-                                        } else {
-                                            $price = '$' . $plant['price'];
-                                        }
-                                        echo '
+                                    if ($wl != NULL) {
+                                        foreach ($wl as $w) {
+                                            $image = executeSingleResult("SELECT min(image_id) as image, image_path FROM image WHERE plant_id = {$w['p_id']}")['image_path'];
+                                            $plant = executeSingleResult("SELECT * FROM plants WHERE plant_id = {$w['p_id']}");
+                                            if ($plant['sale'] != null && $plant['sale'] > 0) {
+                                                $price = '$' . '<del style="text-decoration:line-through;">' . $plant['price'] . '</del> $<span style="color:red">' . $plant['sale'] . '</span>';
+                                            } else {
+                                                $price = '$' . $plant['price'];
+                                            }
+                                            echo '
     
     <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
     <div class="bg-image hover-zoom ripple rounded ripple-surface desired_size">
@@ -145,7 +157,7 @@ if ($wl != NULL) {
     <div class="d-flex flex-column mt-4">
         <button class="btn btn-success btn-sm" type="button"><a href="product-detail.php">Details</a></button>
         <form action="cart.php" method="post" class="wishlist-form">
-        <button class="btn btn-outline-success btn-sm" type="submit" name="add-cart">
+        <button class="btn btn-outline-success btn-sm" type="submit" name="add-to-cart">
             Add to cart
         </button>
         <input type="hidden" name="pid" value="' . $w['p_id'] . '">
@@ -161,16 +173,16 @@ if ($wl != NULL) {
 
 
     ';
-                                    }
-                                } else {
-                                    echo '
+                                        }
+                                    } else {
+                                        echo '
                                     
                                     <tr>
                                     <td colspan="5" style="font-size:23px">No products to display!</td>
                                 </tr>
                                     
                                     ';
-                                }
+                                    }
 
                                     ?>
                                 </div>

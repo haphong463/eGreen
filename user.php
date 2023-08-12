@@ -1,14 +1,15 @@
-<?php 
+<?php
 session_start();
 require_once('db/dbhelper.php');
-if(isset($_SESSION['user'])){
-$user = $_SESSION['user'];
-$user_id = $user['user_id'];
-$sql = "SELECT * FROM users WHERE user_id='$user_id'";
-$infor = executeSingleResult($sql);
-// var_dump($infor);
-// echo $infor['username'];
-// die();
+if (isset($_SESSION['user'])) {
+    $user = $_SESSION['user'];
+    $user_id = $user['user_id'];
+    $sql = "SELECT * FROM users WHERE user_id='$user_id' and type='user'";
+    $infor = executeSingleResult($sql);
+} elseif (isset($_SESSION['user_token'])) {
+    $user = $_SESSION['user_token'];
+    $sql = "SELECT * FROM users WHERE token ='$user' and type='google'";
+    $infor = executeSingleResult($sql);
 }
 
 

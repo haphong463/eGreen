@@ -6,10 +6,10 @@ $check_date = executeResult("
     FROM plants p
     LEFT JOIN order_details od ON p.plant_id = od.plant_id
     LEFT JOIN orders o ON od.order_id = o.order_id
-    WHERE o.order_date IS NULL OR o.order_date <= DATE_SUB(NOW(), INTERVAL 7 DAY)
+    WHERE o.order_date IS NULL OR o.order_date <= DATE_SUB(NOW(), INTERVAL 7 DAY) LIMIT 5
 ");
-$check_inventory = executeResult("SELECT * FROM plants as p INNER JOIN inventory as i ON p.plant_id = i.plant_id WHERE i.quantity < 5");
-$check___inventory = executeResult("SELECT * FROM plants as p INNER JOIN inventory as i ON p.plant_id = i.plant_id WHERE i.quantity > 20");
+$check_inventory = executeResult("SELECT * FROM plants as p INNER JOIN inventory as i ON p.plant_id = i.plant_id WHERE i.quantity < 5 LIMIT 5");
+$check___inventory = executeResult("SELECT * FROM plants as p INNER JOIN inventory as i ON p.plant_id = i.plant_id WHERE i.quantity > 20 LIMIT 5");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,6 +25,12 @@ $check___inventory = executeResult("SELECT * FROM plants as p INNER JOIN invento
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <title>Admin Dashboard Panel</title>
+    <style>
+        .table-container {
+            min-height: 20vh;
+            overflow-y: auto;
+        }
+    </style>
 </head>
 
 <body>
@@ -37,46 +43,44 @@ $check___inventory = executeResult("SELECT * FROM plants as p INNER JOIN invento
         <?php
         include('part/header.php');
         ?>
-
-        //san pham sap het
-        //lau chua dc ban
-        //list quantity
         <div class="container-fluid row">
 
             <div class="col-6">
-                <table class="table">
+                <div class="table-container">
+                    <table class="table">
 
-                    <br><br><br>
-                    <h1>Plants</h1>
-                    <thead>
-                        <tr>
-                            <th scope="col">Category</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Description</th>
-                            <th scope="col">Price</th>
-                        </tr>
-                    </thead>
+                        <br><br><br>
+                        <h1>Plants</h1>
+                        <thead>
+                            <tr>
+                                <th scope="col">Category</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Price</th>
+                            </tr>
+                        </thead>
 
-                    <tbody>
-                        <?php
-                        foreach ($check_date as $plant) {
-                            $cate_name = executeSingleResult("SELECT * FROM categories WHERE category_id = {$plant['category_id']}")['name'];
-                            $inventory = executeSingleResult("SELECT * FROM inventory WHERE plant_id = {$plant['plant_id']}")['quantity'];
-                            echo '
-        
-                                <tr>
-                                    <th scope="row">' . $cate_name . '</th>
-                                    <td>' . $plant['name'] . '</td>
-                                    <td>' . $inventory . '</td>
-                                    <td>' . $plant['price'] . '</td>
+                        <tbody>
+                            <?php
+                            foreach ($check_date as $plant) {
+                                $cate_name = executeSingleResult("SELECT * FROM categories WHERE category_id = {$plant['category_id']}")['name'];
+                                $inventory = executeSingleResult("SELECT * FROM inventory WHERE plant_id = {$plant['plant_id']}")['quantity'];
+                                echo '
 
-                                </tr>
-                            ';
-                        }
-                        ?>
-                    </tbody>
+            <tr>
+                <th scope="row">' . $cate_name . '</th>
+                <td>' . $plant['name'] . '</td>
+                <td>' . $inventory . '</td>
+                <td>' . $plant['price'] . '</td>
 
-                </table>
+            </tr>
+        ';
+                            }
+                            ?>
+                        </tbody>
+
+                    </table>
+                </div>
             </div>
             <div class="col-6">
                 <table class="table">

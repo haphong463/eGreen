@@ -69,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             unlink($oldimage);
         }
 
-        $target_dir = "imgAbout/";
+        $target_dir = "../image/imgAbout/";
         $target_file = $target_dir . basename($_FILES["image"]["name"]);
         $upload_ok = 1;
         $image_file_type =
@@ -91,7 +91,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($upload_ok == 1) {
             move_uploaded_file($_FILES["image"]["tmp_name"], $target_file);
             //echo 'upload successfully!';
-            $image = 'imgAbout/' . $_FILES["image"]["name"];
+            $image = 'image/imgAbout/' . $_FILES["image"]["name"];
         }
     } else {
         $sql = "SELECT image FROM about WHERE id = $id";

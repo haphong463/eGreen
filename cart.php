@@ -1,7 +1,13 @@
 <?php
 require_once 'db/dbhelper.php';
 session_start();
-$user_id = $_SESSION['user']['user_id'];
+if (isset($_SESSION['user'])) {
+    $user_id = $_SESSION['user']['user_id'];
+} elseif (isset($_SESSION['user_token'])) {
+    $user_token = $_SESSION['user_token'];
+    $user = executeSingleResult("SELECT * FROM users WHERE token = '$user_token'");
+    $user_id = $user['user_id'];
+}
 $cartItems = executeResult("SELECT * FROM cart WHERE user_id = $user_id");
 $totalCart = 0;
 if (isset($_POST['add-cart'])) {
@@ -205,7 +211,7 @@ if (isset($_POST['update-cart'])) {
                             <tbody>
 
                                 <?php
-                                $cart_query = executeResult("SELECT * FROM cart WHERE user_id = {$_SESSION['user']['user_id']}");
+                                $cart_query = executeResult("SELECT * FROM cart WHERE user_id = $user_id");
                                 if ($cart_query != NULL) {
                                     foreach ($cart_query as $c) {
                                         $name = executeSingleResult("SELECT * FROM plants WHERE plant_id = {$c['plant_id']}")['name'];

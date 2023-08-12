@@ -2,7 +2,7 @@
 require_once 'db/dbhelper.php';
 session_start();
 
-if (isset($_SESSION['user'])) {
+if (isset($_SESSION['user']) || isset($_SESSION['user_token'])) {
     if (isset($_GET['order_id']) && isset($_GET['reason'])) {
         $order_id = $_GET['order_id'];
         $reason = $_GET['reason'];

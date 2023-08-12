@@ -44,12 +44,10 @@ if (isset($_GET['code'])) {
 
     $user_infor = [
         'email' => $google_account_info['email'],
-        'first_name' => $google_account_info['given_name'],  // Đã thay đổi
-        'last_name' => $google_account_info['family_name'],  // Đã thay đổi
+        'full_name' => $google_account_info['name'],
         'verifiedEmail' => $google_account_info['verifiedEmail'],
         'token' => $google_account_info['id'],
     ];
-
     // print_r($user_infor);
     $sql = "SELECT * FROM users WHERE email ='{$user_infor['email']}' and Type='google'";
     $result = executeSingleResult($sql);
@@ -61,14 +59,14 @@ if (isset($_GET['code'])) {
         // exit;
         header('location:index.php');
     } else {
-        $sql = "INSERT INTO users (email, Type, token,token_create_at,role) VALUES('{$user_infor['email']}','google','{$user_infor['token']}',now(),3)";
+        $sql = "INSERT INTO users (email, fullname, Type, token,token_create_at,role) VALUES('{$user_infor['email']}', '{$user_infor['full_name']}', 'google','{$user_infor['token']}',now(),3)";
         // echo $sql;
         // exit();
         execute($sql);
 
         $_SESSION['user_token'] = $user_infor['token'];
 
-        header('location:index.php');
+        header('location: index.php');
     }
 }
 // 

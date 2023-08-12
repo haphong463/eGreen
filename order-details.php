@@ -32,6 +32,7 @@ if (isset($_GET['order_id'])) {
 
     $order_date = $total['order_date'];
 } else {
+    header('Location: index.php');
 }
 ?>
 <!DOCTYPE html>
@@ -808,7 +809,7 @@ if (isset($_GET['order_id'])) {
                         </div>
                     </td>
 
-                    <td>$' . $plants['price'] . '</td>
+                    <td>$' . $__price . '</td>
                     <td>' . $quantity . '</td>
                     <td>$' . number_format($total_amount_item, 2) . '</td>
                 </tr>

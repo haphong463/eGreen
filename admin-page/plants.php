@@ -4,6 +4,10 @@ $plants = executeResult("SELECT * FROM plants");
 if (isset($_POST['update-price'])) {
     $new_price = $_POST['new_price'];
     $pid = $_POST['plant_id'];
+    if($new_price == 0){
+        execute("UPDATE plants SET sale = NULL WHERE plant_id = $pid");
+        return;
+    } 
     execute("UPDATE plants SET sale = $new_price WHERE plant_id = $pid");
     header('Location: plants.php');
 }

@@ -76,6 +76,20 @@ $forbidden_words = executeResult("SELECT * FROM forbidden_words");
         .star-light {
             color: #e9ecef;
         }
+
+        .mlem {
+            text-decoration: none;
+            color: black;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .mlem:hover {
+            text-decoration: none;
+            color: red;
+            padding: 8px;
+
+        }
     </style>
 </head>
 
@@ -150,7 +164,7 @@ $forbidden_words = executeResult("SELECT * FROM forbidden_words");
                     </div>
                     <div class="col-lg-6 product-details pl-md-5 ftco-animate">
                         <h3 style="font-size: 100px;"><?= $product_result['name'] ?></h3>
-                        <div class="rating d-flex">
+                        <div class="rating">
                             <b><span id="average_rating">0.0</span> / 5</b>
                             <div class="mb-3">
                                 <i class="fas fa-star star-light mr-1 main_star"></i>
@@ -159,15 +173,11 @@ $forbidden_words = executeResult("SELECT * FROM forbidden_words");
                                 <i class="fas fa-star star-light mr-1 main_star"></i>
                                 <i class="fas fa-star star-light mr-1 main_star"></i> (<span id="total_review">0</span> Review)
                             </div>
-
-                            <p class="text-left mr-4">
-                            <p class="mr-2" style="color: #000;">100 <span style="color: #bbb;">Rating</span></p>
-                            </p>
                             <p class="text-left mr-4">
                             <p class="mr-2" style="color: #000;">500 <span style="color: #bbb;">Sold</span></p>
                             </p>
                         </div>
-                        <p class="price"><span>$<td><?= $product_result['price'] ?></td></span> <span style="float: right;">mlemmmmmmmm</span></p>
+                        <p class="price"><span>$<td><?= $product_result['price'] ?></td></span> <span style="float: right;"><?= $cate ?></span></p>
                         <p>
                             <?= $product_result['description']; ?>
                         </p>
@@ -177,27 +187,15 @@ $forbidden_words = executeResult("SELECT * FROM forbidden_words");
 
                                 <div class="w-100"></div>
                                 <div class="input-group col-md-6 d-flex mb-3">
-                                    <button type="button" class="quantity-left-minus btn" data-type="minus" data-field="">
-                                        <i class="ion-ios-remove"></i>
-                                    </button>
-
                                     <!-- đặt input ở đây -->
                                     <input type="hidden" name="pid" value="<?= $pid ?>">
                                     <input type="number" id="quantity" name="quantity" class="quantity form-control input-number" value="1" min="1" max="100">
-
-
-                                    <button type="button" class="quantity-right-plus btn" data-type="plus" data-field="">
-                                        <i class="ion-ios-add"></i>
-                                    </button>
                                 </div>
                                 <div class="w-100"></div>
-                                <div class="col-md-12">
-                                    <p style="color: #000;padding-left:1%;">10 piece available</p>
-                                </div>
                             </div>
                             <p>
                                 <?php
-                                if (isset($_SESSION['user'])) {
+                                if (isset($_SESSION['user']) || isset($_SESSION['user_token'])) {
                                     echo '<button type="submit" class="btn btn-outline-success py-3 px-4" style="width:100%;" name="add-cart">Add to Cart</button>';
                                 } else {
                                     echo '<a href="user-login.php" class="btn btn-outline-success py-3 px-4" style="width:100%;">Add to Cart</a>';
@@ -312,14 +310,14 @@ $forbidden_words = executeResult("SELECT * FROM forbidden_words");
                                     echo '<div class="pagination">';
                                     if ($totalPages > 1) {
                                         if ($currentpage > 1) {
-                                            echo '<a href="?pid=' . $pid . '&page=' . ($currentpage - 1) . '">Previous</a>';
+                                            echo '<a href="?pid=' . $pid . '&page=' . ($currentpage - 1) . '" class="mlem">Previous</a>';
                                         }
                                         for ($i = 1; $i <= $totalPages; $i++) {
 
-                                            echo '<a href="product-detail.php?pid=' . $pid . '&page=' . $i . '">' . $i . '</a>';
+                                            echo '<a href="product-detail.php?pid=' . $pid . '&page=' . $i . '" class="mlem">' . $i . '</a>';
                                         }
                                         if ($currentpage < $totalPages) {
-                                            echo '<a href="product-detail.php?pid=' . $pid . '&page=' . ($currentpage + 1) . '">Next</a> ';
+                                            echo '<a href="product-detail.php?pid=' . $pid . '&page=' . ($currentpage + 1) . '" class="mlem">Next</a> ';
                                         }
                                     }
                                     echo '</div>';
