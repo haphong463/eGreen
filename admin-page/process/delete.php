@@ -1,8 +1,35 @@
+<html>
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.6/dist/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.6/dist/sweetalert2.min.css">
+</head>
+
+</html>
 <?php
 require_once ('../../db/dbhelper.php');
+
 if(isset($_GET['delete_cat'])){
     $id = $_GET['delete_cat'];
+    $check = executeResult("SELECT * FROM plants WHERE category_id = $id");
+
+    if ($check != NULL) {
+        echo "
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Cannot delete this category!',
+            text: 'There are products assigned to this category.',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        }).then(() => {
+            window.location.href = '../category.php';
+        });
+    </script>";
+        exit;
+    }
     execute("DELETE FROM categories WHERE category_id = $id");
+    
     header('Location: ../category.php');
 }
 

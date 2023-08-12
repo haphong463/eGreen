@@ -4,6 +4,7 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
+    text-decoration: none;
 }
 :root{
     --primary-color: #0E4BF1;
@@ -443,3 +444,53 @@ transition: var(--tran-05);
 
 
 
+    .product-physical {
+        max-height: 50vh;
+        overflow: auto;
+    }
+
+    .product-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .product-image img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+    }
+
+    .product-details {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-name {
+        font-weight: bold;
+    }
+
+    .product-info p {
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .user-info {
+        background-color: #f8f8f8;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-info p {
+        margin-bottom: 10px;
+        font-size: 17px;
+    }
+
+    .user-info p:last-child {
+        margin-bottom: 0;
+    }
+
+    .user-info p span {
+        font-weight: bold;
+    }

@@ -11,7 +11,10 @@ $categories_list = executeResult("SELECT * FROM categories");
   <link rel="stylesheet" href="admin.css">
   <!-- iconscount link css -->
   <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
   <title>Admin Dashboard Panel</title>
 </head>
 
@@ -31,13 +34,14 @@ $categories_list = executeResult("SELECT * FROM categories");
 
       <br><br><br>
 
-      <div class="container">
+      <div class="container-fluid">
 
         <h1>Categories</h1>
-        <h2 style="float: right;"><button type="button" class="btn btn-outline-info">add</button></h2>
+        <h2 style="float: right;"><button type="button" class="btn btn-outline-info"><a href="category-add.php">Add</a></button></h2>
 
         <thead>
           <tr>
+            <th scope="col">Image</th>
             <th scope="col">Name</th>
             <th scope="col">Description</th>
             <th scope="col">Action</th>
@@ -50,11 +54,12 @@ $categories_list = executeResult("SELECT * FROM categories");
             echo '
               
               <tr>
+              <td><img width="100px" height="100px" src=../' . $category['image'] . '></td>
             <td>' . $category['name'] . '</td>
             <td>' . $category['description'] . '</td>
             <td>
-              <button type="button" class="btn btn-outline-primary">delete</button>
-              <button type="button" class="btn btn-outline-secondary">edit</button>
+            <a href="category-edit.php?id=' . $category['category_id'] . '"><button type="button" class="btn btn-primary">Edit</button></a>
+              <a href="process/delete.php?delete_cat=' . $category['category_id'] . '"><button type="button" class="btn btn-danger">Delete</button></a>
             </td>
           </tr>
 

@@ -18,7 +18,7 @@ if (isset($_POST['update-blog'])) {
         }
 
 
-        $target_dir = "../../image/blog/";
+        $target_dir = "../../image/blog_image/";
         $target_file = $target_dir . basename($_FILES["blog"]["name"]);
         $upload_ok = 1;
         $image_file_type =
@@ -49,7 +49,7 @@ if (isset($_POST['update-blog'])) {
             move_uploaded_file($_FILES["blog"]["tmp_name"], $target_file);
             //echo 'upload successfully!';     
         }
-        $image = 'image/blog/' . $_FILES["blog"]["name"];
+        $image = 'image/blog_image/' . $_FILES["blog"]["name"];
     } else {
         $sql = "SELECT img FROM blog WHERE blog_id = $id";
         $oldImage = executeSingleResult($sql)['img'];

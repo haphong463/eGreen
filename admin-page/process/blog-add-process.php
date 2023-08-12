@@ -7,7 +7,7 @@ if (isset($_POST['create-blog'])) {
     $type = $_POST['type'];
 }
 if (isset($_SESSION['imageAI'])) {
-    $image = $_SESSION['imageAI'];
+    $image = "image/blog_image/" . $_SESSION['imageAI'];
 } else {
     if (isset($_FILES["blog"])) {
         $target_dir = "../../image/blog_image/";
@@ -48,7 +48,6 @@ if (isset($_SESSION['imageAI'])) {
 
 
 $sql = "INSERT INTO blog (title, content, blog_category_id, img, created_at) VALUES ('$title', '$content', '$type', '$image', NOW())";
-echo $sql;
 unset($_SESSION['imageAI']);
-// execute($sql);
-// header('Location: ../blog.php');
+execute($sql);
+header('Location: ../blog.php');

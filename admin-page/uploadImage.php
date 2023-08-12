@@ -41,16 +41,12 @@ function uploadImages($uploadedImages, $takeid)
             $thumbnail = 'image/plants/thumbnail/' . $file['name'] . '';
             $sql = 'insert into thumbnail(plant_id, thumbnail_path) values (' . $takeid . ',"' . $thumbnail . '")';
             execute($sql);
-        } else {
-            $errors[] = " The file " . basename($file["name"]) . "isn't valid";
         }
     }
     return $errors;
 }
 $errors = uploadImages($uploadedImages, $takeid);
-if (!empty($errors)) {
-    print_r($errors);
-}
+
 
 
 //check file hop le

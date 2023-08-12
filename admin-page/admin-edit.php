@@ -1,24 +1,24 @@
 <?php
 session_start();
 require_once('../db/dbhelper.php');
-if(isset($_GET['id'])){
+if (isset($_GET['id'])) {
     $id = $_GET['id'];
 
-    $sql = 'select * from users where user_id ='.$id;
+    $sql = 'select * from users where user_id =' . $id;
     $adminn = executeSingleResult($sql);
 
     $email = $adminn['email'];
     $password = $adminn['password'];
     $phone = $adminn['phone'];
-    }
+}
 
 
-if(isset($_POST['edit'])&&$_GET['id']){
+if (isset($_POST['edit']) && $_GET['id']) {
     $id = $_GET['id'];
     $email = $_POST['email'];
     $password = $_POST['password'];
     $phone = $_POST['phone'];
-    $sql = "UPDATE admin SET email='".$email."',password='".$password."',phone='".$phone."' WHERE id=".$id;
+    $sql = "UPDATE users SET email='" . $email . "',password='" . $password . "',phone='" . $phone . "' WHERE id=" . $id;
     execute($sql);
     header("Location:admin.php");
 }
@@ -67,8 +67,8 @@ if(isset($_POST['edit'])&&$_GET['id']){
                         <label for="name">Phone :</label>
                         <input id="name" class="form-control" type="text" name="phone" value="<?php echo $phone; ?>">
                     </div>
-                   <br>
-                    <button type="submit" class="btn btn-primary"  name="edit">edit</button>
+                    <br>
+                    <button type="submit" class="btn btn-primary" name="edit">edit</button>
                 </form>
             </div>
         </div>

@@ -62,7 +62,7 @@ $abouts = executeResult($sql);
                                 <td><?php echo $row['content']; ?></td>
                                 <td><?php echo $row['phone']; ?></td>
                                 <td>
-                                    <img src="<?php echo $row['image']; ?>" width="200px" height="120px" alt="">
+                                    <img src="../<?php echo $row['image']; ?>" width="200px" height="120px" alt="">
                                 </td>
                                 <td><?php echo $row['email']; ?></td>
                                 <td>
