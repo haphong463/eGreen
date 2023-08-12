@@ -7,7 +7,7 @@ $order_id = isset($_GET['return_order']) ? $_GET['return_order'] : header('Locat
 $sql = "UPDATE returns SET isAccept = 1 WHERE order_id = '$order_id'";
 execute($sql);
 
-$sql = "UPDATE orders SET status = 'Returned', updated_at = NOW() WHERE order_id = '$order_id'";
+$sql = "UPDATE orders SET status = 'Returning', updated_at = NOW() WHERE order_id = '$order_id'";
 execute($sql);
 $order = executeSingleResult("SELECT * FROM orders WHERE order_id = '$order_id'");
 $users = executeSingleResult("SELECT * FROM users WHERE user_id = {$order['user_id']}");
@@ -75,8 +75,8 @@ $content = '<html>
                                         <p>If you have any questions or need further assistance, please don\'t hesitate to contact our customer support team at support@plantnest.com.</p>
 
                                         <p>
-                                            <a class="tab-button" href="localhost/egreen/order-details.php?order_id=' . $order_id . '">View Order</a>
-                                            <a class="tab-button" href="localhost/egreen">Visit Website</a>
+                                            <a class="tab-button" href="localhost/techwiz/order-details.php?order_id=' . $order_id . '">View Order</a>
+                                            <a class="tab-button" href="localhost/techwiz">Visit Website</a>
                                         </p>
 
                                         <p>Once again, thank you for choosing our store. We truly appreciate your business!</p>

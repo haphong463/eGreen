@@ -1,11 +1,8 @@
 <?php
-session_start();
-//đăng nhập mới vô dc index adminpage!!!!!
-if(isset($_SESSION['admin'])){
-    $admin = $_SESSION['admin'];
-}else{
-    header("location:../login.php");
-}
+require_once '../db/dbhelper.php';
+$count_user = executeSingleResult("SELECT count(user_id) as count FROM users WHERE role = 0 or role = 2")['count'];
+$count_products = executeSingleResult("SELECT count(plant_id) as count FROM plants")['count'];
+$count_order = executeSingleResult("SELECT count(order_id) as count FROM orders")['count'];
 
 ?>
 <!DOCTYPE html>
@@ -38,55 +35,77 @@ if(isset($_SESSION['admin'])){
         <?php
         include('part/header.php');
         ?>
-            <br><br><br>
+        <br><br><br>
+        <div class="dash-content mb-5">
+            <div class="overview">
 
-            <div class="row">
-                <div class="col-xl-6 xl-100">
-                    <div class="card btn-months">
-                        <div class="card-header">
-                            <h5 id="text-date"></h5>
-                            <div class="dashboard-btn-groups">
-                                <div class="btn-group" role="group" aria-label="Basic example">
-                                    <input type="text" style="font-size:0.9rem" value="28" oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="Enter days..." id="daysInput">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div id="myfirstchart" style="height: 250px;"></div>
-                            <div id="chartLegend"></div> <!-- Vùng chứa chú thích tùy chỉnh cho myfirstchart -->
-                        </div>
+                <div class="boxes">
+                    <div class="box box1">
+                        <i class="uil uil-user"></i>
+                        <span class="text">Total Users</span>
+                        <span class="number"><?= $count_user ?></span>
                     </div>
-                </div>
-
-                <div class="col-xl-6 xl-100">
-                    <div class="card btn-months">
-                        <div class="card-header">
-                            <h5 id="text-date-year"></h5>
-                        </div>
-                        <div class="card-body">
-                            <div id="yearChart" style="height: 250px;"></div>
-                            <div id="yearChartLegend"></div> <!-- Vùng chứa chú thích tùy chỉnh cho yearChart -->
-                        </div>
+                    <div class="box box2">
+                        <i class="uil uil-box"></i>
+                        <span class="text">Total Products</span>
+                        <span class="number"><?= $count_products ?></span>
                     </div>
-                </div>
-
-                <div class="col-xl-12 xl-100">
-                    <div class="card btn-months">
-                        <div class="card-header">
-                            <h5 id="text-date-month"></h5>
-                            <div class="dashboard-btn-groups">
-                                <div class="btn-group" role="group" aria-label="Basic example">
-                                    <input type="text" style="font-size:0.9rem" maxlength="4" value="2023" oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="Enter year..." id="yearInput">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div id="monthChart" style="height: 250px;"></div>
-                            <div id="monthChartLegend"></div> <!-- Vùng chứa chú thích tùy chỉnh cho monthChart -->
-                        </div>
+                    <div class="box box3">
+                        <i class="uil uil-bill"></i>
+                        <span class="text">Total orders</span>
+                        <span class="number"><?= $count_order ?></span>
                     </div>
                 </div>
             </div>
+        </div>
+        <h1><i class="uil uil-chart"></i> Chart</h1>
+        <div class="row">
+            <div class="col-xl-6 xl-100">
+                <div class="card btn-months">
+                    <div class="card-header">
+                        <h5 id="text-date"></h5>
+                        <div class="dashboard-btn-groups">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <input type="text" style="font-size:0.9rem" value="28" oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="Enter days..." id="daysInput">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="myfirstchart" style="height: 250px;"></div>
+                        <div id="chartLegend"></div> <!-- Vùng chứa chú thích tùy chỉnh cho myfirstchart -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-6 xl-100">
+                <div class="card btn-months">
+                    <div class="card-header">
+                        <h5 id="text-date-year"></h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="yearChart" style="height: 250px;"></div>
+                        <div id="yearChartLegend"></div> <!-- Vùng chứa chú thích tùy chỉnh cho yearChart -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-12 xl-100">
+                <div class="card btn-months">
+                    <div class="card-header">
+                        <h5 id="text-date-month"></h5>
+                        <div class="dashboard-btn-groups">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <input type="text" style="font-size:0.9rem" maxlength="4" value="2023" oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="Enter year..." id="yearInput">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="monthChart" style="height: 250px;"></div>
+                        <div id="monthChartLegend"></div> <!-- Vùng chứa chú thích tùy chỉnh cho monthChart -->
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
     <!-- Container-fluid Ends-->

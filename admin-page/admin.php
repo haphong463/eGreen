@@ -1,18 +1,14 @@
 <?php
 session_start();
 require_once('../db/dbhelper.php');
-//đăng nhập mới vô dc index adminpage!!!!!
-if (isset($_SESSION['admin'])) {
-    $admin = $_SESSION['admin'];
-    $admin_id = $admin['user_id'];
-    $sql = "SELECT * FROM users where user_id = '$admin_id'";
-    $Check_Role = executeSingleResult($sql);
-} else {
-    header("location:../login.php");
-}
 $sql = 'select * from users';
 $slider = executeResult($sql);
-
+// if(isset($_SESSION['admin'])){
+//     $admin = $_SESSION['admin'];
+// $role = $admin['role'];
+// }else{
+//     header('location:login-admin.php');
+// }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -41,9 +37,9 @@ $slider = executeResult($sql);
         ?>
         <br><br><br><br><br><br>
         <div class="table-responsive">
-            <i class="fa-solid fa-circle" style="color:lawngreen"></i>: Online<br>
-            <i class="fa-solid fa-circle" style="color:gray"></i>: Offline<br>
-            <i class="fa-solid fa-circle" style="color:red"></i>: Don't Disturb <br>
+        <i class="fa-solid fa-circle" style="color:lawngreen"></i>: Online<br> 
+        <i class="fa-solid fa-circle" style="color:gray"></i>: Offline<br>
+        <i class="fa-solid fa-circle" style="color:red"></i>: Don't Disturb <br>
             <div class="btn-popup pull-right">
                 <a href="admin-add.php">
                     <button type="button" class="btn btn-info">Add</button>
@@ -57,11 +53,8 @@ $slider = executeResult($sql);
                             <th scope="col">Email</th>
                             <th scope="col">Phone</th>
                             <th scope="col">Role</th>
-                            <?php if($Check_Role['role']==1){  ?>
                             <th scope="col">Action</th>
                             <th scope="col">Status</th>
-                            <?php } ?>
-                            
 
                         </tr>
                     </thead>
@@ -71,53 +64,48 @@ $slider = executeResult($sql);
                             foreach ($slider as $row) {
                                 if ($row['role'] == 2) {
                         ?>
-                                    <?php
-                                    $userStatus = $row['status'];
-                                    $userClass = ($userStatus == 1) ? 'user-info' : ''; ?>
-                                    <tr class="light">
-                                        <td><?php echo $row['user_id']; ?></td>
+                                <?php
+                                $userStatus = $row['status'];
+                                $userClass = ($userStatus == 1) ? 'user-info' : ''; ?>
+                                <tr class="light">
+                                    <td><?php echo $row['user_id']; ?></td>
+                                    <?php 
+// trạng thái hoạt động
+                                                               date_default_timezone_set('Asia/Ho_Chi_Minh');
+                                                                $dateString = strtotime($row['token_create_at']);
+                                                                        $currentTime = time(); 
+                                                                   $time = ($currentTime  -   $dateString)/60;
+                                                                
+                                                                    if($row['token']!=''&& $time <= 1){ ?>
+                                                                         <td><i class="fa-solid fa-circle" style="color:lawngreen"></i><?php echo $row['email']; ?></td>
+                                                                       <?php }elseif($row['token']!=''&& $time > 1){ ?>
+                                                                        <td><i class="fa-solid fa-circle" style="color:red"></i><?php echo $row['email']; ?></td>
+                                                                    <?php }else{?>
+                                                                       <td><i class="fa-solid fa-circle" style="color:gray"></i><?php echo $row['email']; ?></td> 
+                                                                        <?php } ?>
+                                    
+                                    <td><?php echo $row['phone']; ?></td>
+                                    <td><?php echo ($row['role'] == '1') ? 'admin' : 'employee'; ?></td>
+                                    <td>
+                                        <a href="admin-edit.php?id=<?php echo $row['user_id']; ?>" class="btn btn-outline-primary"><i class="uil uil-edit"></i></a>
+                                        <a onclick="return confirm('Do you want to delete this user?');" href="admin-delete.php?id=<?php echo $row['user_id']; ?>" class="btn btn-outline-danger"><i class="uil uil-trash-alt"></i></a>
+                                        <a href="admin-view.php?id=<?php echo $row['user_id']; ?>" class="btn btn-outline-success"><i class="uil uil-eye"></i></a>
+                                    </td>
+                                    <td>
                                         <?php
-                                        // trạng thái hoạt động
-                                        date_default_timezone_set('Asia/Ho_Chi_Minh');
-                                        $dateString = strtotime($row['token_create_at']);
-                                        $currentTime = time();
-                                        $time = ($currentTime  -   $dateString) / 60;
-
-                                        if ($row['token_create_at'] != '' && $time <= 1) { ?>
-                                            <td><i class="fa-solid fa-circle" style="color:lawngreen"></i><?php echo $row['email']; ?></td>
-                                        <?php } elseif ($row['token_create_at'] != ''  && $time > 1) { ?>
-                                            <td><i class="fa-solid fa-circle" style="color:red"></i><?php echo $row['email']; ?></td>
-                                        <?php } else { ?>
-                                            <td><i class="fa-solid fa-circle" style="color:gray"></i><?php echo $row['email']; ?></td>
-                                        <?php } ?>
-
-                                        <td><?php echo $row['phone']; ?></td>
-                                        <td><?php echo ($row['role'] == '1') ? 'admin' : 'employee'; ?></td>
-                                        
-                                        <?php if($Check_Role['role']==1){  ?>
-                                        <td>
-                                            <a href="admin-edit.php?id=<?php echo $row['user_id']; ?>" class="btn btn-outline-primary"><i class="uil uil-edit"></i></a>
-                                            <a onclick="return confirm('Do you want to delete this user?');" href="admin-delete.php?id=<?php echo $row['user_id']; ?>" class="btn btn-outline-danger"><i class="uil uil-trash-alt"></i></a>
-                                            <a href="admin-view.php?id=<?php echo $row['user_id']; ?>" class="btn btn-outline-success"><i class="uil uil-eye"></i></a>
-                                        </td>
-                                        <?php
-                                            $newStatus = ($userStatus == 1) ? 0 : 1; // Toggles the status
-                                            $statusText = ($userStatus == 1) ? 'Inactive' : 'Active'; // Text for status
-                                            ?>
-                                            <td>
+                                        $newStatus = ($userStatus == 1) ? 0 : 1; // Toggles the status
+                                        $statusText = ($userStatus == 1) ? 'Inactive' : 'Active'; // Text for status
+                                        ?>
                                             <a href="admin-status.php?id=<?php echo $row['user_id']; ?>&status=<?php echo $newStatus; ?>" class="btn btn-outline-danger">
                                                 <?php echo $statusText; ?>
                                             </a>
-
-                                        </td>
-                                        <?php } ?>
                                         
-                                           
+                                    </td>
 
-                                    </tr>
+                                </tr>
                             <?php
-                                }
                             }
+                        }
                         } else {
                             ?>
                             <tr>

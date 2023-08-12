@@ -329,8 +329,15 @@ if ($_GET['order_id']) {
                                         if($total['status'] == "Returned"){
                                             echo '
                                             <p style="color: red; text-decoration:underline; font-style:italic;" class="mt-3 text-center">  
-                                                    Approved
+                                                    Returned
                                                 </p>
+                                            ';
+                                        }
+
+                                        if($total['status'] == "Returning"){
+                                            echo '
+                                             <a href="process/confirm-return-order.php?return_order=' . $order_id . '" 
+                                                    class="btn btn-info mt-3">Confirm</a>
                                             ';
                                         }
 
