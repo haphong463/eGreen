@@ -27,6 +27,9 @@ if ($current_page != '/login.php') {
 
             }
             if($check['status']==1){
+                $sql = "UPDATE users SET token_create_at = null WHERE user_id = '$admin_id'" ;
+                execute($sql);
+                
                 unset($_SESSION['admin']); // Xóa hết các biến session
                 unset($_SESSION['tokens']); // Xóa hết các biến session
 
@@ -34,6 +37,7 @@ if ($current_page != '/login.php') {
                 alert("You have been banned from accessing the website by the administrator.")
                 window.location.href = "../login.php";
                 </script>';
+
             }
         }
     } 
