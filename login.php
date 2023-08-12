@@ -37,6 +37,7 @@ if (isset($_POST['login'])) {
     $sql = "SELECT * FROM users WHERE email='$email'";
     $checkEmail = executeSingleResult($sql);
 
+
     if (empty($email)) {
         $err['email'] = 'Email is required';
     }
@@ -53,7 +54,7 @@ if (isset($_POST['login'])) {
         // echo $checkPass;
         // var_dump($checkEmail);
         if ($checkPass) {
-            if($checkEmail["status"]!=1){
+            if($checkEmail["status"]!=1 && $checkEmail["role"]!=3){
                 $admin_id = $checkEmail['user_id'];
                 $secretKey = 'your_secret_key';
                 $expirationTimeMinutes = 60; // Thời gian hết hạn token: 60 phút
