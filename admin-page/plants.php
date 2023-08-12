@@ -1,5 +1,15 @@
 <?php
+session_start();
 require_once('../db/dbhelper.php');
+if(isset($_SESSION['admin'])){
+    $admin = $_SESSION['admin'];
+    $admin_id = $admin['user_id'];
+    $sql= "SELECT * FROM users where user_id = '$admin_id'";
+    $Check_Role = executeSingleResult($sql);
+}
+else{
+    header("location:login.php");
+}
 $perPage = 6;
 
 // Trang hiện tại, mặc định là 1
@@ -84,7 +94,9 @@ if (isset($_GET['sort'])) {
                         <th scope="col">Category</th>
                         <th scope="col">Name</th>
                         <th scope="col">Price</th>
+                        <?php if($Check_Role['role']==1){?>
                         <th scope="col">Action</th>
+                        <?php } ?>
                     </tr>
                 </thead>
 
@@ -103,6 +115,9 @@ if (isset($_GET['sort'])) {
                         <th scope="row">' . $cate_name . '</th>
                         <td>' . $plant['name'] . '</td>
                         <td>' . $price . '</td>
+                        ';
+                        if($Check_Role['role']==1){
+                        echo'
                         <td>
                             <a href="plant-edit.php?id=' . $plant['plant_id'] . '"><button type="button" class="btn btn-secondary">Edit</button></a>
                            <a href="process/delete.php?delete_plant=' . $plant['plant_id'] . '"> <button type="button" class="btn btn-danger">Delete</button></a>
@@ -113,8 +128,9 @@ if (isset($_GET['sort'])) {
                         
                           <!-- The Modal -->
                          
-                        </td>
-                    </tr>
+                        </td>';
+                        }
+                    '</tr>
 
                         ';
                     }

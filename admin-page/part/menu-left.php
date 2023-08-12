@@ -7,7 +7,7 @@
     </div>
 
     <div class="menu-items">
-        <ul class="nav-links">
+        <ul class="nav-links"style="overflow: auto;">
             <li><a href="index.php">
                     <i class="uil uil-estate"></i>
                     <span class="link-name">Dashboard</span>

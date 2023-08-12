@@ -1,6 +1,14 @@
 <?php
+session_start();
 require_once('../db/dbhelper.php');
-
+if (isset($_SESSION['admin'])) {
+  $admin = $_SESSION['admin'];
+  $admin_id = $admin['user_id'];
+  $sql = "SELECT * FROM users where user_id = '$admin_id'";
+  $Check_Role = executeSingleResult($sql);
+} else {
+  header("location:login.php");
+}
 $perPage = 3;
 
 // Trang hiện tại, mặc định là 1
@@ -54,7 +62,9 @@ $categories_list = executeResult($sql);
             <th scope="col">Image</th>
             <th scope="col">Name</th>
             <th scope="col">Description</th>
+            <?php if ($Check_Role['role'] == 1) { ?>
             <th scope="col">Action</th>
+            <?php } ?>
           </tr>
         </thead>
 
@@ -70,10 +80,12 @@ $categories_list = executeResult($sql);
                 <?php $cate = $category['description'];
                 echo strlen($cate) > 30 ? substr($cate, 0, 30) . "..." : $cate; ?>
               </td>
+            <?php  if ($Check_Role['role'] == 1) { ?>
               <td>
                 <a href="category-edit.php?id=<?php echo $category['category_id'] ?>"><button type="button" class="btn btn-primary">Edit</button></a>
                 <a href="process/delete.php?delete_cat=<?php echo $category['category_id'] ?>"><button type="button" class="btn btn-danger">Delete</button></a>
               </td>
+           <?php   } ?>
             </tr>
 
           <?php
