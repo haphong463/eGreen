@@ -79,7 +79,6 @@ if (isset($_GET['blog_id'])) {
                     <div class="mb-3">
                         <label for="image">Images:</label>
                         <input type="file" class="form-control" id="blog" name="blog">
-                        <br><span id="blogError" class="error" style="color: red;"></span> <!-- Error message for blog image field -->
                         <img src="../<?php echo $image ?>" alt="" width="200px" height="200px">
                     </div>
                     <button type="submit" name="update-blog" class="btn btn-primary mt-3">Update</button>
@@ -102,7 +101,6 @@ if (isset($_GET['blog_id'])) {
         function validateForm() {
             var title = document.getElementById("title").value;
             var content = document.getElementById("content").value;
-            var type = document.getElementById("type").value;
             var blog = document.getElementById("blog").value;
 
             if (title === "") {
@@ -112,25 +110,11 @@ if (isset($_GET['blog_id'])) {
                 document.getElementById("titleError").innerText = ""; // Clear the error message
             }
 
-            if (content === "") {
+            if (content == "") {
                 document.getElementById("contentError").innerText = "Please enter the content.";
                 return false;
             } else {
                 document.getElementById("contentError").innerText = ""; // Clear the error message
-            }
-
-            if (type === "") {
-                document.getElementById("typeError").innerText = "Please enter the type.";
-                return false;
-            } else {
-                document.getElementById("typeError").innerText = ""; // Clear the error message
-            }
-
-            if (blog === "") {
-                document.getElementById("blogError").innerText = "Please select a blog image.";
-                return false;
-            } else {
-                document.getElementById("blogError").innerText = ""; // Clear the error message
             }
 
             return true; // Submit the form if all the validations pass

@@ -1,5 +1,5 @@
 <?php
-require('../../db/dbhelper.php');
+require('../db/dbhelper.php');
 $id = '';
 
 if(isset($_GET['id'])){
@@ -9,6 +9,6 @@ if(isset($_GET['id'])){
     $sql = 'DELETE FROM `blog_category` where blog_category_id ="'.$id.'"';
     execute($sql);
 
-    header('Location:../b-category.php');
+    header('Location:b-category.php');
 }
 ?>

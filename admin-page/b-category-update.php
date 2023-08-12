@@ -42,15 +42,17 @@ if (isset($_POST['edit'])) {
             <div class="container">
 
                 <h1>Blog Category Edit</h1>
-                <form action="" method="post">
+                <form action="" method="post" onsubmit="return validateForm()">
                     <input type="hidden" name="cate_id" value="<?= $id ?>">
                     <div class="mb-3 mt-3">
-                        <label for="email">Category Name:</label>
+                        <label for="name">Category Name:</label>
                         <input type="text" class="form-control" id="name" placeholder="Enter category name" value="<?= $categories['name'] ?>" name="name">
+                        <span id="nameError" class="error" style="color: red;"></span> <!-- Error message for title field -->
                     </div>
                     <div class="mb-3">
                         <label for="description">Description:</label>
                         <input type="text" class="form-control" id="description" placeholder="Enter description" value="<?= $categories['description'] ?>" name="description">
+                        <span id="descError" class="error" style="color: red;"></span> <!-- Error message for title field -->
                     </div>
                     <button type="submit" name="edit" class="btn btn-primary">Edit</button>
                 </form>
@@ -59,6 +61,29 @@ if (isset($_POST['edit'])) {
     </section>
 
     <script src="../script.js"></script>
+
+    <script>
+        function validateForm() {
+            var name = document.getElementById("name").value;
+            var description = document.getElementById("description").value;
+
+            if (name === "") {
+                document.getElementById("nameError").innerText = "Please enter a name.";
+                return false;
+            } else {
+                document.getElementById("nameError").innerText = ""; // Clear the error message
+            }
+
+            if (description == "") {
+                document.getElementById("descError").innerText = "Please enter the description.";
+                return false;
+            } else {
+                document.getElementById("descError").innerText = ""; // Clear the error message
+            }
+
+            return true; // Submit the form if all the validations pass
+        }
+    </script>
 </body>
 
 </html>

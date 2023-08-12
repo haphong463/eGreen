@@ -1,7 +1,7 @@
 <?php
 require_once('../db/dbhelper.php');
 
-$perPage = 6;
+$perPage = 7;
 
 // Trang hiện tại, mặc định là 1
 $page = isset($_GET['page']) ? $_GET['page'] : 1;
@@ -9,8 +9,16 @@ $page = isset($_GET['page']) ? $_GET['page'] : 1;
 // Tính chỉ mục bắt đầu của dữ liệu trên trang hiện tại
 $start = ($page - 1) * $perPage;
 
-$sql = "SELECT * FROM blog ORDER BY created_at DESC LIMIT $start, $perPage";
+$sql = "SELECT * FROM blog";
+
+$id = 1;
+if (isset($_GET['sort']) && $_GET['sort'] != "all") {
+    $id = $_GET['sort'];
+    $sql .= " WHERE blog_category_id = $id";
+}
+$sql .= " ORDER BY created_at DESC LIMIT $start, $perPage";
 $blog = executeResult($sql);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -53,7 +61,22 @@ $blog = executeResult($sql);
 
             <br><br><br>
             <h1>Blog</h1>
-            <div class="container">
+
+            <form id="sortForm" action="" method="get">
+                <select name="sort">
+                    <option value="all">All</option>
+                    <?php
+                    $cates = executeResult("SELECT * FROM blog_category");
+                    foreach ($cates as $catess) {
+                    ?>
+                        <option  value="<?php echo $catess['blog_category_id']; ?>"><?php echo $catess['name']; ?></option>
+                    <?php
+                    }
+                    ?>
+                </select>
+            </form>
+
+            <div class="container-fluid">
 
                 <a href="b-category.php">
                     <i class="uil uil-user"></i>
@@ -69,7 +92,6 @@ $blog = executeResult($sql);
                         <a style="text-decoration: none;" href="blog-add.php">Add</a>
                     </button>
                 </h2>
-
                 <thead>
                     <tr>
                         <th scope="col">Title</th>
@@ -84,14 +106,14 @@ $blog = executeResult($sql);
                     <?php
                     if ($blog != null) {
                         foreach ($blog as $b) {
-                            $type = executeSingleResult("SELECT * FROM blog_category WHERE blog_category_id = {$b['blog_category_id']}")['name'];
+                            $cat_name = executeSingleResult("SELECT * FROM blog_category WHERE blog_category_id = {$b['blog_category_id']}")['name'];
                     ?>
                             </tr>
                             <td><?php $title = $b['title'];
                                 echo strlen($title) > 30 ? substr($title, 0, 30) . "..." : $title; ?></td>
                             <td><?php $content = $b['content'];
                                 echo strlen($content) > 30 ? substr($content, 0, 30) . "..." : $content; ?></td>
-                            <td><?php echo $type ?></td>
+                            <td><?php echo $cat_name ?></td>
                             <td><?php echo $b['created_at'] ?></td>
                             <td>
                                 <a href="process/blog-delete.php?blog_id=<?php echo $b['blog_id']; ?>">
@@ -142,6 +164,14 @@ $blog = executeResult($sql);
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             });
+        });
+    </script>
+
+    <script>
+        // Lắng nghe sự kiện thay đổi lựa chọn trong dropdown
+        document.querySelector('select[name="sort"]').addEventListener('change', function() {
+            // Gọi hàm submit() của form khi có sự thay đổi
+            document.getElementById('sortForm').submit();
         });
     </script>
 </body>

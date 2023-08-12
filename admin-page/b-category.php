@@ -77,7 +77,7 @@ $blogCate = executeResult($sql);
                                     echo strlen($content) > 30 ? substr($content, 0, 30) . "..." : $content; ?></td>
                                 <!-- echo strlen($content) > 30 ? substr($content, 0, 30) . "..." : $content; -->
                                 <td>
-                                    <a href="process/b-category-delete.php?id=<?php echo $b['blog_category_id']; ?>">
+                                    <a href="b-category-delete.php?id=<?php echo $b['blog_category_id']; ?>">
                                         <button class="btn btn-danger"><i class="fas fa-times">delete</i></button>
                                     </a>
 
