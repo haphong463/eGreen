@@ -1,3 +1,13 @@
+<?php
+session_start();
+//đăng nhập mới vô dc index adminpage!!!!!
+if(isset($_SESSION['admin'])){
+    $admin = $_SESSION['admin'];
+}else{
+    header("location:../login.php");
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
