@@ -13,10 +13,6 @@
                     <span class="link-name">Dashboard</span>
                 </a>
             </li>
-            <li><a href="admin.php">
-                    <i class="uil uil-brightness"></i>
-                    <span class="link-name">Admin</span>
-                </a></li>
 
             <li><a href="category.php">
                     <i class="uil uil-file"></i>
@@ -27,18 +23,37 @@
                     <i class="uil uil-chart-line"></i>
                     <span class="link-name">Plants</span>
                 </a></li>
-
-            <li><a href="discount-plants.php">
-                    <i class="uil uil-user"></i>
-                    <span class="link-name">Plants Discount</span>
-                </a></li>
             <li><a href="inventory.php">
                     <i class="uil uil-user"></i>
                     <span class="link-name">Inventory</span>
                 </a></li>
+            <li><a href="orders.php">
+                    <i class="uil uil-user"></i>
+                    <span class="link-name">Orders</span>
+                </a></li>
+            <li><a href="blog.php">
+                    <i class="uil uil-user"></i>
+                    <span class="link-name">Blog</span>
+                </a></li>
+            <li><a href="review.php">
+                    <i class="uil uil-user"></i>
+                    <span class="link-name">Review</span>
+                </a></li>
+            <li><a href="words.php">
+                    <i class="uil uil-user"></i>
+                    <span class="link-name">Words</span>
+                </a></li>
+            <li><a href="discount.php">
+                    <i class="uil uil-user"></i>
+                    <span class="link-name">Coupon List</span>
+                </a></li>
+            <li><a href="contact.php">
+                    <i class="uil uil-user"></i>
+                    <span class="link-name">Contact</span>
+                </a></li>
             <li><a href="about.php">
                     <i class="uil uil-user"></i>
-                    <span class="link-name">About</span>
+                    <span class="link-name">Introduce</span>
                 </a></li>
         </ul>
 
