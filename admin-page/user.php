@@ -3,12 +3,14 @@ session_start();
 require_once('../db/dbhelper.php');
 $sql = 'select * from users';
 $slider = executeResult($sql);
-// if(isset($_SESSION['admin'])){
-//     $admin = $_SESSION['admin'];
-// $role = $admin['role'];
-// }else{
-//     header('location:login-admin.php');
-// }
+if (isset($_SESSION['admin'])) {
+    $admin = $_SESSION['admin'];
+    $admin_id = $admin['user_id'];
+    $sql = "SELECT * FROM users where user_id = '$admin_id'";
+    $Check_Role = executeSingleResult($sql);
+} else {
+    header("location:../login.php");
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -50,7 +52,9 @@ $slider = executeResult($sql);
                             <th scope="col">Phone</th>
                             <th scope="col">Type</th>
                             <th scope="col">Action</th>
+<?php if($Check_Role==1){ ?>
                             <th scope="col">Status</th>
+                            <?php }?>
 
                         </tr>
                     </thead>
@@ -87,6 +91,7 @@ $slider = executeResult($sql);
                                         <a onclick="return confirm('Do you want to delete this user?');" href="admin-delete.php?id=<?php echo $row['user_id']; ?>" class="btn btn-outline-danger"><i class="uil uil-trash-alt"></i></a> -->
                                         <a href="admin-view.php?id=<?php echo $row['user_id']; ?>" class="btn btn-outline-success"><i class="uil uil-eye"></i></a>
                                     </td>
+                                    <?php if($Check_Role==1){ ?>
                                     <td>
                                         <?php
                                         $newStatus = ($userStatus == 1) ? 0 : 1; // Toggles the status
@@ -97,6 +102,7 @@ $slider = executeResult($sql);
                                             </a>
                                         
                                     </td>
+                                    <?php } ?>
 
                                 </tr>
                             <?php
