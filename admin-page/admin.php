@@ -93,7 +93,7 @@ $slider = executeResult($sql);
 
                                         <td><?php echo $row['phone']; ?></td>
                                         <td><?php echo ($row['role'] == '1') ? 'admin' : 'employee'; ?></td>
-                                        <?php $Check_Role['role']==1 ?>
+                                        
                                         <?php if($Check_Role['role']==1){  ?>
                                         <td>
                                             <a href="admin-edit.php?id=<?php echo $row['user_id']; ?>" class="btn btn-outline-primary"><i class="uil uil-edit"></i></a>
@@ -104,13 +104,14 @@ $slider = executeResult($sql);
                                             $newStatus = ($userStatus == 1) ? 0 : 1; // Toggles the status
                                             $statusText = ($userStatus == 1) ? 'Inactive' : 'Active'; // Text for status
                                             ?>
+                                            <td>
                                             <a href="admin-status.php?id=<?php echo $row['user_id']; ?>&status=<?php echo $newStatus; ?>" class="btn btn-outline-danger">
                                                 <?php echo $statusText; ?>
                                             </a>
 
                                         </td>
                                         <?php } ?>
-                                        <td>
+                                        
                                            
 
                                     </tr>
