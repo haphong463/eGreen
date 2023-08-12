@@ -1,10 +1,9 @@
-
-
 <?php
-
+session_start();
+require_once '../db/dbhelper.php';
 class ChatGPT
 {
-    private $API_KEY = "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";
+    private $API_KEY;
     private $textURL = "https://api.openai.com/v1/completions";
     private $imageURL =  "https://api.openai.com/v1/images/generations";
 
@@ -14,6 +13,7 @@ class ChatGPT
     public function __construct()
     {
         $this->curl = curl_init();
+        $this->API_KEY = executeSingleResult("SELECT * FROM keyopenai")['key3'];
     }
 
     public function initialize($requestType = "text" || "image")
@@ -57,76 +57,77 @@ class ChatGPT
     // returns URL with the image
     public function generateImage($prompt, $imageSize = '512x512', $numberOfImages = 1)
     {
-       // OpenAI API endpoint
+        // OpenAI API endpoint
         $api_endpoint = 'https://api.openai.com/v1/images/generations';
 
-    // OpenAI API key
-    $api_key = $this->API_KEY;
+        // OpenAI API key
+        $api_key = $this->API_KEY;
 
+        // Request headers
+        $headers = [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $api_key,
+        ];
 
-    // Request headers
-    $headers = [
-        'Content-Type: application/json',
-        'Authorization: Bearer ' . $api_key,
-    ];
+        // Request data
+        $data = [
+            'model' => 'image-alpha-001', // DALL-E 2
+            'prompt' => $prompt,
+            'num_images' => $numberOfImages,
+            'size' => $imageSize,
+        ];
 
-    // Request data
-    $data = [
-        'model' => 'image-alpha-001', // DALL-E 2
-        'prompt' => $prompt,
-        'num_images' => $numberOfImages,
-        'size' => $imageSize,
-    ];
+        // Send request to OpenAI API
+        $curl = curl_init($api_endpoint);
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        $response = curl_exec($curl);
+        curl_close($curl);
 
-    // Send request to OpenAI API
-    $curl = curl_init($api_endpoint);
-    curl_setopt($curl, CURLOPT_POST, true);
-    curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-    $response = curl_exec($curl);
-    curl_close($curl);
+        // Decode response JSON
+        $response_data = json_decode($response, true);
 
-    // Decode response JSON
-    $response_data = json_decode($response, true);
+        // Get image data from response
+        $image_data = $response_data['data'][0]['url'];
 
-    // Get image data from response
-    $image_data = $response_data['data'][0]['url'];
+        // Generate a hash-based image name
+        $title = $prompt; // Assuming title is the prompt
+        $image_name = md5($title) . ".png";
+        $_SESSION['imageAI'] = $image_name;
 
-    // Save image to file
-    $image_content = file_get_contents($image_data);
-    file_put_contents('cat.png', $image_content);
-            return $image_data; 
-            
-        }
+        // Save image to file with the generated name
+        $image_content = file_get_contents($image_data);
+        file_put_contents("../image/blog_image/" . $image_name, $image_content);
+
+        return $image_data;
     }
+}
 
 $testObject = new ChatGPT();
 
-if(isset ($_POST["action"])){
+if (isset($_POST["action"])) {
     $action = $_POST["action"];
-    switch($action){
+    switch ($action) {
         case "create_title":
-            $title =  $testObject->createTextRequest("write a title for my plant blog");
+            $title = $testObject->createTextRequest("write a title for my plant blog");
+            $title = str_replace('"', '', $title); // Loại bỏ tất cả dấu ngoặc kép
             echo $title;
             break;
         case "create_image":
             $title = $_POST["title"];
-            $image = $testObject->generateImage($title) ;
+            $image = $testObject->generateImage($title);
             echo $image;
             break;
-            case "create_content":
-                $title = $_POST["title"];
-                $content = $testObject->createTextRequest("write a blog for title: " . $title) ;
-                echo $content;
-                break;
-
+        case "create_content":
+            $title = $_POST["title"];
+            $content = $testObject->createTextRequest("write a blog for title: " . $title);
+            echo $content;
+            break;
     }
-   
 }
 
 // echo $testObject->createTextRequest("viết cho tôi một đoạn 1000");
 // echo '<br>';
 // echo $testObject->generateImage("plant out door") ;
-?>
-
