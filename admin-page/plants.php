@@ -1,15 +1,21 @@
 <?php
+session_start();
 require_once('../db/dbhelper.php');
+if(isset($_SESSION['admin'])){
+    $admin = $_SESSION['admin'];
+    $admin_id = $admin['user_id'];
+    $Check_Role = "SELECT * FROM users where user_id = '$admin_id'";
+}
+else{
+    header("location:../login.php");
+}
 $plants = executeResult("SELECT * FROM plants");
 if (isset($_POST['update-price'])) {
     $new_price = $_POST['new_price'];
     $pid = $_POST['plant_id'];
-    if($new_price == 0){
-        execute("UPDATE plants SET sale = NULL WHERE plant_id = $pid");
-        return;
-    } 
     execute("UPDATE plants SET sale = $new_price WHERE plant_id = $pid");
     header('Location: plants.php');
+
 }
 ?>
 <!DOCTYPE html>
@@ -54,7 +60,9 @@ if (isset($_POST['update-price'])) {
                         <th scope="col">Category</th>
                         <th scope="col">Name</th>
                         <th scope="col">Price</th>
+                        <?php if($Check_Role['role']==1){?>
                         <th scope="col">Action</th>
+                        <?php } ?>
                     </tr>
                 </thead>
 
@@ -73,6 +81,9 @@ if (isset($_POST['update-price'])) {
                         <th scope="row">' . $cate_name . '</th>
                         <td>' . $plant['name'] . '</td>
                         <td>' . $price . '</td>
+                        ';
+                        if($Check_Role['role']==1){
+                        echo'
                         <td>
                             <a href="plant-edit.php?id=' . $plant['plant_id'] . '"><button type="button" class="btn btn-secondary">Edit</button></a>
                            <a href="process/delete.php?delete_plant=' . $plant['plant_id'] . '"> <button type="button" class="btn btn-danger">Delete</button></a>
@@ -83,8 +94,9 @@ if (isset($_POST['update-price'])) {
                         
                           <!-- The Modal -->
                          
-                        </td>
-                    </tr>
+                        </td>';
+                        }
+                    '</tr>
 
                         ';
                     }
