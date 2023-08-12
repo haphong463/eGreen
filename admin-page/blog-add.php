@@ -1,3 +1,7 @@
+<?php
+require_once("../db/dbhelper.php");
+$categories = executeResult("SELECT * FROM blog_category");
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,6 +15,7 @@
     <title>Admin Dashboard Panel</title>
     <script src="https://cdn.tiny.cloud/1/nb4vev3lun09knzucwhj47n7cmn1y7l4j5w4jhq249xu7j66/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
 
 </head>
 
@@ -30,33 +35,58 @@
 
             <br><br><br>
 
-            <div class="container">
+            <div class="container-fluid">
 
                 <h1>Blog Add</h1>
-                <form action="process/blog-add-process.php" method="post" enctype="multipart/form-data">
-
+                <form action="process/blog-add-process.php" class="row" method="post" enctype="multipart/form-data">
                     <div class="mb-3 mt-3">
+                        <label for="type">Type:</label>
+                        <select id="type" name="type">
+                            <?php
+                            foreach ($categories as $cate) {
+                                echo '
+                                
+                                <option value=" ' . $cate['blog_category_id'] . '">' . $cate['name'] . '</option>
+
+                                ';
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="mb-3 mt-3 col-md-8">
                         <label for="title">Title:</label>
-                        <input type="text" class="form-control" id="title" placeholder="Enter blog title" name="title"><a class="btn btn-secondary" onclick="createTitle()">Auto generated</a>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="title" placeholder="Enter blog title" name="title">
+                            <div class="input-group-append">
+                                <a class="btn btn-secondary auto-generated-button" onclick="createTitle()">Auto generated</a>
+                            </div>
+                        </div>
                         <span id="titleError" class="error" style="color: red;"></span> <!-- Error message for title field -->
                     </div>
-                    <div class="mb-3">
-                        <label for="type">Type:</label>
-                        <input type="text" class="form-control" id="type" placeholder="Enter type" name="type">
-                        <span id="typeError" class="error" style="color: red;"></span> <!-- Error message for type field -->
-                    </div>
-                    <div class="mb-3">
+                    <div class="mb-3 col-md-8">
                         <label for="blog">Blog image:</label>
-                        <input type="file" class="form-control" id="blog" placeholder="Enter description" name="blog"><a class="btn btn-secondary" onclick="createImage()">Auto generated</a>
+                        <div class="input-group">
+                            <input type="file" class="form-control" id="blog" placeholder="Enter description" name="blog">
+                            <div class="input-group-append">
+                                <a class="btn btn-secondary auto-generated-button" id="imageBtn" onclick="createImage()" disabled>Auto generated</a>
+                            </div>
+                        </div>
                         <span id="blogError" class="error" style="color: red;"></span> <!-- Error message for blog image field -->
                         <img src="" id="imageAI">
                     </div>
-                    <div class="mb-3">
-                        <label for="content">Content:</label>
-                        <textarea id="content" name="content" placeholder="Enter content"></textarea><a class="btn btn-secondary" onclick="createContent()">Auto generated</a>
+                    <div class="mb-3 col-md-8">
+                        <div class="d-flex justify-content-between">
+                            <label for="content">Content:</label>
+                            <a class="btn btn-secondary auto-generated-button" id="contentBtn" onclick="createContent()" disabled>Auto generated</a>
+                        </div>
+                        <textarea id="content" name="content" class="form-control" placeholder="Enter content"></textarea>
                         <span id="contentError" class="error" style="color: red;"></span> <!-- Error message for description field -->
                     </div>
-                    <button type="submit" name="create-blog" class="btn btn-primary">Submit</button>
+
+
+                    <div class="col-md-8 offset-md-4">
+                        <button type="submit" name="create-blog" class="btn btn-primary">Submit</button>
+                    </div>
                 </form>
         </table>
         </div>
@@ -113,7 +143,7 @@
 
     <script>
         function createTitle() {
-            
+
             $.ajax({
                 url: "AI.php",
                 method: "POST",
@@ -123,14 +153,24 @@
                 success: function(data) {
                     document.getElementById("title").value = data;
                     //location.reload();
+                    var autoGeneratedButtons = document.querySelectorAll(".auto-generated-button");
+                    autoGeneratedButtons.forEach(button => {
+                        button.classList.remove("btn-secondary");
+                        button.classList.add("btn-primary");
+                        button.removeAttribute("disabled");
+                    });
                 }
             });
-                    
+
         }
 
-        function createImage(){
-            
+        function createImage() {
+
             var title = document.getElementById("title").value;
+            if (!title) {
+                alert("Please enter a title before generating image.");
+                return;
+            }
             $.ajax({
                 url: "AI.php",
                 method: "POST",
@@ -139,16 +179,20 @@
                     title: title
                 },
                 success: function(data) {
-                    
+
                     document.getElementById("imageAI").src = data;
                     //location.reload();
                 }
             });
         }
 
-        function createContent(){
-            
+        function createContent() {
+
             var title = document.getElementById("title").value;
+            if (!title) {
+                alert("Please enter a title before generating content.");
+                return;
+            }
             $.ajax({
                 url: "AI.php",
                 method: "POST",
@@ -157,7 +201,7 @@
                     title: title
                 },
                 success: function(data) {
-                    alert(data);
+                    // alert(data);
                     tinymce.get("content").setContent(data);
                     //document.getElementById("content").innerHTML = data;
                 }

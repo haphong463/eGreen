@@ -1,13 +1,15 @@
 <?php
 require_once("../db/dbhelper.php");
 
+$categories = executeResult("SELECT * FROM blog_category");
+
 if (isset($_GET['blog_id'])) {
     $id = $_GET['blog_id'];
     $sql = "SELECT * FROM blog where blog_id = $id";
     $info = executeSingleResult($sql);
     $title = $info['title'];
     $content = $info['content'];
-    $type = $info['type'];
+    $type = $info['blog_category_id'];
     $image = $info['img'];
 }
 ?>
@@ -51,14 +53,23 @@ if (isset($_GET['blog_id'])) {
                 <form action="process/blog-update-process.php" method="post" enctype="multipart/form-data" class="row" onsubmit="return validateForm()">
                     <input type="hidden" name="blog_id" value="<?= $id ?>">
                     <div class="mb-3 mt-3">
+                        <label for="type">Type:</label>
+                        <select name="cate_id">
+                            <?php
+                            foreach ($categories as $cate) {
+                                echo '
+                                
+                                <option value=" ' . $cate['blog_category_id'] . '">' . $cate['name'] . '</option>
+
+                                ';
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="mb-3 mt-3">
                         <label for="title">Title:</label>
                         <input type="text" class="form-control" id="title" placeholder="Enter blog title" value="<?php echo $title ?>" name="title">
                         <span id="titleError" class="error" style="color: red;"></span> <!-- Error message for title field -->
-                    </div>
-                    <div class="mb-3">
-                        <label for="type">Type:</label>
-                        <input type="text" class="form-control" id="type" placeholder="Enter type" value="<?php echo $type ?>" name="type">
-                        <span id="typeError" class="error" style="color: red;"></span> <!-- Error message for type field -->
                     </div>
                     <div class="mb-3">
                         <label for="content">Content:</label>
